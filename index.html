@@ -367,10 +367,12 @@ textarea:focus { border-color:var(--violet); }
 
   <div class="section-title">Today's Schedule</div>
   <div class="card" style="margin-bottom:24px;">
-    <button class="btn-primary" onclick="window.open('https://calendar.google.com','_blank')" style="margin-bottom:16px;">Open Google Calendar</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--text2);">Your Google Calendar events for today</div>
+      <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')" style="font-size:12px;padding:6px 12px;">Open Calendar ↗</button>
+    </div>
     <div id="scheduleContainer">
-      <div class="event-placeholder">No events scheduled</div>
-      <div class="event-placeholder">Connect your Google Calendar to see events</div>
+      <div style="color:var(--text3);font-size:13px;padding:12px 0;">Loading events…</div>
     </div>
   </div>
 
@@ -713,12 +715,12 @@ textarea:focus { border-color:var(--violet); }
 
   <div class="section-title">Google Drive Sync</div>
   <div class="card" style="margin-bottom:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div style="font-weight:500;margin-bottom:2px;">Connected</div>
-        <div id="syncStatus" style="font-size:12px;color:var(--text2);">Not connected</div>
+        <div style="font-weight:500;margin-bottom:4px;" id="syncStatusLabel">Checking…</div>
+        <div id="syncStatus" style="font-size:12px;color:var(--text2);">Your data syncs to life_hub_data.json in your Google Drive</div>
       </div>
-      <button class="btn-primary" onclick="signInWithGoogle()">Reconnect</button>
+      <button class="btn-ghost" onclick="signIn()" style="font-size:12px;">Reconnect</button>
     </div>
   </div>
 
@@ -755,7 +757,7 @@ textarea:focus { border-color:var(--violet); }
    ============================================================ */
 const CLIENT_ID       = '56935101632-caejt9kn3bp3t3c8t3cc1csk7m6h4d3h.apps.googleusercontent.com';
 const DRIVE_FILE_NAME = 'life_hub_data.json';
-const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
 
 let gAccessToken  = null;
 let gDriveFileId  = null;
@@ -798,8 +800,54 @@ function signIn() {
 function launchApp() {
   document.getElementById('sync-overlay').classList.add('hidden');
   document.getElementById('sync-indicator').style.display = 'flex';
+  // Update settings page status
+  const lbl = document.getElementById('syncStatusLabel');
+  if (lbl) lbl.textContent = '✓ Connected to Google Drive';
+  if (lbl) lbl.style.color = 'var(--violet)';
   initializeApp();
+  fetchTodayEvents();
   setSyncStatus('ok', 'Synced');
+}
+
+async function fetchTodayEvents() {
+  if (!gAccessToken) return;
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const endOfDay   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(startOfDay)}&timeMax=${encodeURIComponent(endOfDay)}&singleEvents=true&orderBy=startTime&maxResults=10`;
+    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + gAccessToken } });
+    if (!res.ok) throw new Error('Calendar API ' + res.status);
+    const data = await res.json();
+    renderTodayEvents(data.items || []);
+  } catch (e) {
+    const el = document.getElementById('scheduleContainer');
+    if (el) el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0;">Could not load calendar — make sure Google Calendar access is granted.</div>';
+  }
+}
+
+function renderTodayEvents(events) {
+  const el = document.getElementById('scheduleContainer');
+  if (!el) return;
+  if (!events.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0;">No events today 🎉</div>';
+    return;
+  }
+  el.innerHTML = events.map(ev => {
+    const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
+    const end   = ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
+    const timeStr = start ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '') : 'All day';
+    return `<div style="display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="min-width:90px;font-size:12px;color:var(--violet);font-weight:600;padding-top:2px;">${timeStr}</div>
+      <div>
+        <div style="font-size:14px;font-weight:500;">${ev.summary || '(No title)'}</div>
+        ${ev.location ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;">📍 ${ev.location}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div style="margin-top:12px;"><button class="btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="window.open('https://calendar.google.com','_blank')">View full calendar ↗</button></div>`;
+  // Update event count on dashboard
+  const cnt = document.getElementById('eventsCount');
+  if (cnt) cnt.textContent = events.length;
 }
 
 /* ---- Drive helpers (identical pattern to Finance Hub) ---- */
