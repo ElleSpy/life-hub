@@ -314,7 +314,7 @@ textarea:focus { border-color:var(--violet); }
 </div>
 
 <!-- SYNC INDICATOR -->
-<div id="sync-indicator">
+<div id="sync-indicator" style="display:none;">
   <div id="sync-dot"></div>
   <span id="sync-label">Synced</span>
 </div>
@@ -379,7 +379,7 @@ textarea:focus { border-color:var(--violet); }
       <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')" style="font-size:12px;padding:6px 12px;">Open Calendar ↗</button>
     </div>
     <div id="scheduleContainer">
-      <div style="color:var(--text3);font-size:13px;padding:12px 0;">Loading events…</div>
+      <div style="color:var(--text3);font-size:13px;padding:12px 0;">Sign in with Google to load your calendar events.</div>
     </div>
   </div>
 
@@ -407,21 +407,23 @@ textarea:focus { border-color:var(--violet); }
 <div id="page-calendar" class="page">
   <div class="page-eyebrow">Your Schedule</div>
   <div class="page-title">Calendar</div>
-  <div class="page-sub">View and manage your events</div>
+  <div class="page-sub">Your events for the week ahead</div>
 
+  <!-- Next 7 days events from API -->
+  <div class="section-title" style="margin-bottom:14px;">Next 7 Days</div>
   <div class="card" style="margin-bottom:24px;">
-    <button class="btn-primary" onclick="window.open('https://calendar.google.com','_blank')" style="margin-bottom:16px;">Open Google Calendar</button>
-  </div>
-
-  <div class="card">
-    <iframe src="https://calendar.google.com/calendar/embed?src=lauraspires5%40gmail.com&ctz=Europe%2FLondon&mode=WEEK" style="border:0;width:100%;height:600px;border-radius:var(--radius-sm);"></iframe>
-  </div>
-
-  <div class="section-title" style="margin-top:28px;">Upcoming Events (Next 7 Days)</div>
-  <div class="card">
     <div id="upcomingEvents">
-      <div class="event-placeholder">No upcoming events</div>
+      <div style="color:var(--text3);font-size:13px;padding:8px 0;">Sign in with Google to load upcoming events.</div>
     </div>
+  </div>
+
+  <!-- Embedded calendar - scrolled to current time via JS -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="section-title" style="margin-bottom:0;">Full Calendar</div>
+    <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')" style="font-size:12px;padding:6px 14px;">Open in Google ↗</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <iframe id="calendarIframe" src="https://calendar.google.com/calendar/embed?src=lauraspires5%40gmail.com&ctz=Europe%2FLondon&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0" style="border:0;width:100%;height:620px;display:block;"></iframe>
   </div>
 </div>
 
@@ -811,7 +813,7 @@ textarea:focus { border-color:var(--violet); }
    ============================================================ */
 const CLIENT_ID       = '56935101632-caejt9kn3bp3t3c8t3cc1csk7m6h4d3h.apps.googleusercontent.com';
 const DRIVE_FILE_NAME = 'life_hub_data.json';
-const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
+const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly';
 
 let gAccessToken  = null;
 let gDriveFileId  = null;
@@ -865,18 +867,33 @@ function launchApp() {
 
 async function fetchTodayEvents() {
   if (!gAccessToken) return;
+  const now = new Date();
+  const startOfDay  = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  const endOfDay    = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  const in7Days     = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59);
+
+  // Fetch today's events
   try {
-    const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-    const endOfDay   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
-    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(startOfDay)}&timeMax=${encodeURIComponent(endOfDay)}&singleEvents=true&orderBy=startTime&maxResults=10`;
+    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(startOfDay.toISOString())}&timeMax=${encodeURIComponent(endOfDay.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=15`;
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + gAccessToken } });
     if (!res.ok) throw new Error('Calendar API ' + res.status);
     const data = await res.json();
     renderTodayEvents(data.items || []);
   } catch (e) {
     const el = document.getElementById('scheduleContainer');
-    if (el) el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0;">Could not load calendar — make sure Google Calendar access is granted.</div>';
+    if (el) el.innerHTML = '<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load calendar events. Try signing out and back in.</div>';
+  }
+
+  // Fetch next 7 days events
+  try {
+    const url7 = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(now.toISOString())}&timeMax=${encodeURIComponent(in7Days.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=25`;
+    const res7 = await fetch(url7, { headers: { Authorization: 'Bearer ' + gAccessToken } });
+    if (!res7.ok) throw new Error('Calendar API 7d ' + res7.status);
+    const data7 = await res7.json();
+    renderUpcomingEvents(data7.items || []);
+  } catch (e) {
+    const el = document.getElementById('upcomingEvents');
+    if (el) el.innerHTML = '<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load upcoming events.</div>';
   }
 }
 
@@ -890,18 +907,54 @@ function renderTodayEvents(events) {
   el.innerHTML = events.map(ev => {
     const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
     const end   = ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
-    const timeStr = start ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '') : 'All day';
+    const timeStr = start
+      ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
+        + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '')
+      : 'All day';
     return `<div style="display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
-      <div style="min-width:90px;font-size:12px;color:var(--violet);font-weight:600;padding-top:2px;">${timeStr}</div>
+      <div style="min-width:80px;font-size:12px;color:var(--violet);font-weight:600;padding-top:2px;">${timeStr}</div>
       <div>
         <div style="font-size:14px;font-weight:500;">${ev.summary || '(No title)'}</div>
         ${ev.location ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;">📍 ${ev.location}</div>` : ''}
       </div>
     </div>`;
-  }).join('') + `<div style="margin-top:12px;"><button class="btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="window.open('https://calendar.google.com','_blank')">View full calendar ↗</button></div>`;
-  // Update event count on dashboard
+  }).join('');
   const cnt = document.getElementById('eventsCount');
   if (cnt) cnt.textContent = events.length;
+}
+
+function renderUpcomingEvents(events) {
+  const el = document.getElementById('upcomingEvents');
+  if (!el) return;
+  if (!events.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px 0;">No events in the next 7 days 🎉</div>';
+    return;
+  }
+  // Group by day
+  const days = {};
+  events.forEach(ev => {
+    const d = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
+    const key = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'short' });
+    if (!days[key]) days[key] = [];
+    days[key].push(ev);
+  });
+  el.innerHTML = Object.entries(days).map(([day, evs]) => `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--violet);margin-bottom:8px;">${day}</div>
+      ${evs.map(ev => {
+        const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
+        const end   = ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
+        const timeStr = start
+          ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
+            + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '')
+          : 'All day';
+        return `<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div style="min-width:80px;font-size:12px;color:var(--text2);font-weight:500;padding-top:1px;">${timeStr}</div>
+          <div style="font-size:13px;font-weight:500;">${ev.summary || '(No title)'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
 }
 
 /* ---- Drive helpers (identical pattern to Finance Hub) ---- */
@@ -1426,9 +1479,8 @@ function renderAllPages() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (isAuthenticated) {
-    initializeApp();
-  }
+  // Always run basic UI init (greeting, date, countdown) regardless of sign-in state
+  initializeApp();
 });
 </script>
 
