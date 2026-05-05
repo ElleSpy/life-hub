@@ -79,6 +79,13 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--t
 .btn-export { width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);color:rgba(255,255,255,0.6);font-size:11px;cursor:pointer;font-family:'Manrope', sans-serif;transition:all 0.15s; }
 .btn-export:hover { background:rgba(255,255,255,0.14);color:#fff; }
 
+/* NOTION FOLDER CARDS */
+.notion-folder-card { display:flex;flex-direction:column;gap:4px;padding:18px 20px;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);text-decoration:none;color:var(--text);transition:all 0.18s;cursor:pointer; }
+.notion-folder-card:hover { background:var(--card-high);border-color:var(--violet-mid);transform:translateY(-2px);box-shadow:0 6px 24px rgba(167,139,250,0.15); }
+.notion-folder-icon { font-size:26px;margin-bottom:4px; }
+.notion-folder-name { font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text); }
+.notion-folder-desc { font-size:12px;color:var(--text3);line-height:1.4; }
+
 /* HAMBURGER */
 .hamburger { display:none;position:fixed;top:14px;left:14px;z-index:200;background:#0e0e0e;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#e5e2e1;font-size:16px; }
 .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:90; }
@@ -466,50 +473,97 @@ textarea:focus { border-color:var(--violet); }
 <div id="page-notes" class="page">
   <div class="page-eyebrow">Remember Everything</div>
   <div class="page-title">Notes</div>
-  <div class="page-sub">Keep your thoughts organized</div>
+  <div class="page-sub">Your notes live in Notion — organised by folder, accessible anywhere.</div>
 
-  <div class="tip-box" style="margin-bottom:24px;">
-    <div class="tip-box-title">Tip</div>
-    <div class="tip-item">
-      <div class="tip-dot"></div>
-      <span>Consider using <strong>Notion</strong> for more advanced note-taking and collaboration</span>
-    </div>
+  <!-- Open Notion button -->
+  <div style="margin-bottom:28px;">
+    <a href="https://www.notion.so/3578ca7c10538109a866ee4b18437367" target="_blank"
+       style="display:inline-flex;align-items:center;gap:10px;padding:13px 22px;background:var(--violet);color:#fff;border-radius:999px;font-family:'Manrope',sans-serif;font-size:14px;font-weight:600;text-decoration:none;transition:opacity 0.15s;"
+       onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+      <span style="font-size:18px;">📋</span> Open My Notes in Notion
+    </a>
   </div>
 
-  <div class="two-column">
-    <div style="display:flex;flex-direction:column;">
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <input type="text" class="form-input" id="notesSearch" placeholder="Search notes..." style="flex:1;">
-        <button class="btn-primary" onclick="createNewNote()">+ New</button>
-      </div>
-      <div class="sidebar-section" id="notesList">
-        <div style="color:var(--text2);font-size:13px;">No notes yet</div>
-      </div>
-    </div>
+  <!-- Folder grid -->
+  <div class="section-title" style="margin-bottom:16px;">Jump to a folder</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px;">
 
-    <div>
-      <div id="noteEditor" style="display:none;">
-        <div style="margin-bottom:16px;">
-          <label class="form-label">Note Title</label>
-          <input type="text" class="form-input" id="noteTitle" placeholder="Untitled Note">
-        </div>
-        <div style="margin-bottom:16px;">
-          <label class="form-label">Content</label>
-          <textarea id="noteContent" style="min-height:300px;" placeholder="Start typing..."></textarea>
-        </div>
-        <div style="margin-bottom:16px;">
-          <label class="form-label">Tags (comma-separated)</label>
-          <input type="text" class="form-input" id="noteTags" placeholder="e.g. work, personal, ideas">
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-primary" onclick="saveCurrentNote()">Save</button>
-          <button class="btn-ghost" onclick="deleteCurrentNote()">Delete</button>
-        </div>
-      </div>
-      <div id="noteEmptyState" style="text-align:center;color:var(--text2);padding:40px 20px;">
-        <div style="font-size:48px;margin-bottom:12px;">📝</div>
-        <div>Select a note or create a new one</div>
-      </div>
+    <a href="https://www.notion.so/3578ca7c105381589354e33d00674412" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">💼</div>
+      <div class="notion-folder-name">Work</div>
+      <div class="notion-folder-desc">Meetings, projects, new job prep</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c105381aabb3fdfb5b205c335" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🏃</div>
+      <div class="notion-folder-name">Fitness</div>
+      <div class="notion-folder-desc">Workout logs, plans, milestones</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c10538191b669d31594c41a0e" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">💰</div>
+      <div class="notion-folder-name">Finance</div>
+      <div class="notion-folder-desc">Budget notes, financial goals</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c105381deae48dd0bee65f8b3" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🏥</div>
+      <div class="notion-folder-name">Health</div>
+      <div class="notion-folder-desc">Appointments, health log, wellness</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c1053814db70ff986599454a0" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🎯</div>
+      <div class="notion-folder-name">Interests</div>
+      <div class="notion-folder-desc">Hobbies, TV, music</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c10538196a3c1d08a8fd29aed" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">📚</div>
+      <div class="notion-folder-name">Learning</div>
+      <div class="notion-folder-desc">Books, courses, articles</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c10538163acdcf8639bbe1ce9" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🌿</div>
+      <div class="notion-folder-name">Lifestyle</div>
+      <div class="notion-folder-desc">Home, routines, food, shopping</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c105381548e34c103fa310540" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🧍</div>
+      <div class="notion-folder-name">Personal</div>
+      <div class="notion-folder-desc">Reflections, goals, life admin</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c10538150a50dd61ad1c704bd" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">✈️</div>
+      <div class="notion-folder-name">Travel</div>
+      <div class="notion-folder-desc">Trip plans, packing lists</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c105381b28f60e26c12182b47" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">🤝</div>
+      <div class="notion-folder-name">Volunteering</div>
+      <div class="notion-folder-desc">Session notes, reflections</div>
+    </a>
+
+    <a href="https://www.notion.so/3578ca7c105381a5b2cbdb03a3e5cc22" target="_blank" class="notion-folder-card">
+      <div class="notion-folder-icon">📝</div>
+      <div class="notion-folder-name">General Notes</div>
+      <div class="notion-folder-desc">Quick captures, inbox</div>
+    </a>
+
+  </div>
+
+  <!-- Templates reminder -->
+  <div class="card" style="border-left:3px solid var(--violet);padding:18px 22px;">
+    <div class="card-title" style="font-size:14px;margin-bottom:8px;">📋 Templates available in Notion</div>
+    <div style="font-size:13px;color:var(--text2);display:flex;flex-direction:column;gap:6px;">
+      <div>📋 <strong>Work</strong> — Meeting Note Template (copy for each meeting)</div>
+      <div>🏃 <strong>Fitness</strong> — Workout Log Template (copy for each session)</div>
+      <div>✈️ <strong>Travel</strong> — Trip Plan Template + Standard Packing List</div>
+      <div>🤝 <strong>Volunteering</strong> — Session Note Template (copy each Saturday)</div>
     </div>
   </div>
 </div>
