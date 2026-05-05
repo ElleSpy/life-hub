@@ -366,9 +366,9 @@ textarea:focus { border-color:var(--violet); }
       <div class="stat-val" id="activeGoalsCount">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-eyebrow">Days to New Job</div>
-      <div class="stat-val" id="daysToJob">0</div>
-      <div class="stat-sub">June 15, 2026</div>
+      <div class="stat-eyebrow" id="jobCountdownLabel">Days to New Job</div>
+      <div class="stat-val" id="daysToJob">–</div>
+      <div class="stat-sub" id="jobCountdownSub">June 15, 2026</div>
     </div>
   </div>
 
@@ -876,24 +876,38 @@ async function fetchTodayEvents() {
   try {
     const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(startOfDay.toISOString())}&timeMax=${encodeURIComponent(endOfDay.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=15`;
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + gAccessToken } });
-    if (!res.ok) throw new Error('Calendar API ' + res.status);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('Status ' + res.status + ': ' + errText.substring(0, 200));
+    }
     const data = await res.json();
     renderTodayEvents(data.items || []);
   } catch (e) {
     const el = document.getElementById('scheduleContainer');
-    if (el) el.innerHTML = '<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load calendar events. Try signing out and back in.</div>';
+    if (el) el.innerHTML = `<div style="color:var(--coral);font-size:13px;padding:8px 0;">
+      Calendar error: ${e.message}<br>
+      <span style="color:var(--text3);font-size:12px;margin-top:4px;display:block;">
+        This usually means the Google Calendar API isn't enabled for this app, or the OAuth app isn't authorised for this domain.
+        <a href="https://calendar.google.com" target="_blank" style="color:var(--violet);">Open Google Calendar ↗</a>
+      </span>
+    </div>`;
+    console.error('Calendar fetch error:', e);
   }
 
   // Fetch next 7 days events
   try {
     const url7 = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(now.toISOString())}&timeMax=${encodeURIComponent(in7Days.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=25`;
     const res7 = await fetch(url7, { headers: { Authorization: 'Bearer ' + gAccessToken } });
-    if (!res7.ok) throw new Error('Calendar API 7d ' + res7.status);
+    if (!res7.ok) {
+      const errText7 = await res7.text();
+      throw new Error('Status ' + res7.status + ': ' + errText7.substring(0, 200));
+    }
     const data7 = await res7.json();
     renderUpcomingEvents(data7.items || []);
   } catch (e) {
     const el = document.getElementById('upcomingEvents');
-    if (el) el.innerHTML = '<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load upcoming events.</div>';
+    if (el) el.innerHTML = `<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load upcoming events: ${e.message}</div>`;
+    console.error('Upcoming events fetch error:', e);
   }
 }
 
@@ -1082,10 +1096,28 @@ function updateTodayDate() {
 
 function calculateDaysToJob() {
   const jobDate = new Date('2026-06-15');
-  const today = new Date();
-  const diff = jobDate - today;
-  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  document.getElementById('daysToJob').textContent = Math.max(0, days);
+  const today   = new Date();
+  today.setHours(0, 0, 0, 0);
+  jobDate.setHours(0, 0, 0, 0);
+  const diffMs  = jobDate - today;
+  const days    = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  const valEl   = document.getElementById('daysToJob');
+  const lblEl   = document.getElementById('jobCountdownLabel');
+  const subEl   = document.getElementById('jobCountdownSub');
+  if (days > 0) {
+    valEl.textContent = days;
+    lblEl.textContent = 'Days to New Job';
+    subEl.textContent = 'June 15, 2026';
+  } else if (days === 0) {
+    valEl.textContent = '🎉';
+    lblEl.textContent = 'It\'s the day!';
+    subEl.textContent = 'First day at your new job';
+  } else {
+    // days is negative — show how many days in
+    valEl.textContent = Math.abs(days);
+    lblEl.textContent = 'Days In';
+    subEl.textContent = 'At your new job 💼';
+  }
 }
 
 function saveQuickCapture() {
