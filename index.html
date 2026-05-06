@@ -543,18 +543,18 @@
       <button class="btn-ghost" onclick="fetchTodoist()" style="font-size:11px;padding:5px 12px;">↻ Refresh</button>
       <a href="https://app.todoist.com" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open Todoist ↗</a>
     </div>
-    <div class="td-cols-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:10px;">Today &amp; Overdue</div>
-        <div id="td-task-list-today"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+    <div class="td-cols-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch;">
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-title" style="margin-bottom:10px;flex-shrink:0;">Today &amp; Overdue</div>
+        <div id="td-task-list-today" style="flex:1;overflow-y:auto;min-height:0;"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:10px;">Next 7 Days</div>
-        <div id="td-task-list-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-title" style="margin-bottom:10px;flex-shrink:0;">Next 7 Days</div>
+        <div id="td-task-list-upcoming" style="flex:1;overflow-y:auto;min-height:0;"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:10px;">All Tasks</div>
-        <div id="td-task-list-all"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-title" style="margin-bottom:10px;flex-shrink:0;">Inbox</div>
+        <div id="td-task-list-all" style="flex:1;overflow-y:auto;min-height:0;"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
     </div>
   </div>
@@ -1295,7 +1295,8 @@ function renderTodoistTasks() {
   function renderCol(elId, tasks) {
     const el = document.getElementById(elId);
     if (!el) return;
-    if (!tasks.length) { el.innerHTML = '<div class="empty-state">All clear ✓</div>'; return; }
+    const emptyMsg = elId === 'td-task-list-all' ? 'Inbox is empty ✓' : 'All clear ✓';
+    if (!tasks.length) { el.innerHTML = `<div class="empty-state">${emptyMsg}</div>`; return; }
     el.innerHTML = '<div class="task-list">' + tasks.map(taskHTML).join('') + '</div>';
   }
 
@@ -1303,7 +1304,7 @@ function renderTodoistTasks() {
   const d = t => t.due ? t.due.date.slice(0,10) : null;
   renderCol('td-task-list-today',    sortTasks(active.filter(t => d(t) && d(t) <= todayStr)));
   renderCol('td-task-list-upcoming', sortTasks(active.filter(t => d(t) && d(t) > todayStr && d(t) <= in7Str)));
-  renderCol('td-task-list-all',      sortTasks(active));
+  renderCol('td-task-list-all',      sortTasks(active.filter(t => !t.due)));
 }
 
 async function completeTodoistTask(id) {
