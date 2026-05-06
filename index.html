@@ -543,16 +543,16 @@
       <button class="btn-ghost" onclick="fetchTodoist()" style="font-size:11px;padding:5px 12px;">↻ Refresh</button>
       <a href="https://app.todoist.com" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open Todoist ↗</a>
     </div>
-    <div class="td-cols-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
-      <div class="card" style="height:420px;overflow-y:auto;">
+    <div class="td-cols-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;">
+      <div class="card">
         <div class="card-title" style="margin-bottom:10px;">Today &amp; Overdue</div>
         <div id="td-task-list-today"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
-      <div class="card" style="height:420px;overflow-y:auto;">
+      <div class="card">
         <div class="card-title" style="margin-bottom:10px;">Next 7 Days</div>
         <div id="td-task-list-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
-      <div class="card" style="height:420px;overflow-y:auto;">
+      <div class="card">
         <div class="card-title" style="margin-bottom:10px;">All Tasks</div>
         <div id="td-task-list-all"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
@@ -1276,7 +1276,10 @@ function renderTodoistTasks() {
   function taskHTML(t) {
     const due    = t.due ? t.due.date : null;
     const isOver = due && due < todayStr;
-    const dueDisp = due ? new Date(due + 'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
+    // due.date can be "2026-05-08" (date-only) or "2026-05-08T19:00:00" (datetime)
+    // Slice to just the date part to avoid Invalid Date / timezone issues
+    const datePart = due ? due.slice(0,10) : null;
+    const dueDisp  = datePart ? new Date(datePart + 'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
     return `<div class="td-task-row" id="td-row-${t.id}">
       <button class="td-check-btn" onclick="completeTodoistTask('${t.id}')" title="Mark complete"></button>
       <div class="td-task-body">
@@ -1297,8 +1300,9 @@ function renderTodoistTasks() {
   }
 
   const active = tdAllTasks.filter(t => !tdCompletingIds.has(t.id));
-  renderCol('td-task-list-today',    sortTasks(active.filter(t => t.due && t.due.date <= todayStr)));
-  renderCol('td-task-list-upcoming', sortTasks(active.filter(t => t.due && t.due.date > todayStr && t.due.date <= in7Str)));
+  const d = t => t.due ? t.due.date.slice(0,10) : null;
+  renderCol('td-task-list-today',    sortTasks(active.filter(t => d(t) && d(t) <= todayStr)));
+  renderCol('td-task-list-upcoming', sortTasks(active.filter(t => d(t) && d(t) > todayStr && d(t) <= in7Str)));
   renderCol('td-task-list-all',      sortTasks(active));
 }
 
@@ -1342,11 +1346,12 @@ function renderTodoistTodayCard() {
   if (!el) return;
 
   const todayStr = new Date().toLocaleDateString('en-CA');
-  const tasks = tdAllTasks.filter(t => t.due && t.due.date <= todayStr);
+  const dStr = t => t.due ? t.due.date.slice(0,10) : null;
+  const tasks = tdAllTasks.filter(t => dStr(t) && dStr(t) <= todayStr);
 
   document.getElementById('stat-tasks').textContent = tasks.length;
-  document.getElementById('stat-tasks-sub').textContent = tasks.filter(t => t.due.date < todayStr).length > 0
-    ? tasks.filter(t => t.due.date < todayStr).length + ' overdue'
+  document.getElementById('stat-tasks-sub').textContent = tasks.filter(t => dStr(t) < todayStr).length > 0
+    ? tasks.filter(t => dStr(t) < todayStr).length + ' overdue'
     : 'due today';
 
   if (!tasks.length) {
@@ -1357,7 +1362,7 @@ function renderTodoistTodayCard() {
   const priColor = p => p === 4 ? 'var(--red)' : p === 3 ? 'var(--amber)' : p === 2 ? 'var(--blue)' : 'var(--border2)';
   el.innerHTML = '<div style="display:flex;flex-direction:column;gap:2px;">'
     + tasks.slice(0,10).map(t => {
-    const isOver = t.due.date < todayStr;
+    const isOver = dStr(t) < todayStr;
     return `<div id="home-td-row-${t.id}" style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
       <button class="td-check-btn" onclick="completeTodoistTaskHome('${t.id}')" title="Mark complete" style="width:16px;height:16px;flex-shrink:0;"></button>
       <span style="font-size:12px;color:var(--text);flex:1;line-height:1.3;">${t.content}</span>
