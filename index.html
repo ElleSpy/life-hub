@@ -42,9 +42,9 @@
   body.light {
     --bg:           #f5f4f2;
     --bg2:          #ebebea;
-    --card:         #ffffff;
-    --card-high:    #f0efed;
-    --sidebar-bg:   #ffffff;
+    --card:         #faf9f7;
+    --card-high:    #f0eeeb;
+    --sidebar-bg:   #eeecea;
     --text:         #18181a;
     --text2:        #6c7a8b;
     --text3:        #8b96a4;
@@ -75,15 +75,16 @@
   #signin-overlay { position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
   #signin-overlay.hidden { display:none; }
   .signin-card { background:var(--card);border-radius:20px;padding:44px 48px;max-width:440px;width:100%;border:1px solid var(--border2);text-align:center;box-shadow:var(--shadow-lg); }
-  .signin-logo { font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px; }
+  .signin-logo { font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;color:var(--violet); }
   .signin-sub { font-size:13px;color:var(--text3);margin-bottom:32px; }
   .signin-btn { display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 24px;background:var(--violet);color:#fff;border:none;border-radius:999px;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity 0.15s;margin-bottom:12px; }
   .signin-btn:hover { opacity:0.88; }
   .signin-note { font-size:11.5px;color:var(--text3);line-height:1.6;margin-top:20px; }
 
   /* ── SYNC INDICATOR ── */
-  #sync-indicator { position:fixed;top:14px;right:16px;z-index:500;font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;font-family:'Manrope',sans-serif;display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow); }
-  #theme-toggle { position:fixed;top:46px;right:16px;z-index:500;width:30px;height:30px;border-radius:50%;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;padding:0; }
+  #sync-indicator { font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;font-family:'Manrope',sans-serif;display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow); }
+  #top-bar { position:fixed;top:14px;right:16px;z-index:500;display:flex;align-items:center;gap:6px; }
+  #theme-toggle { width:28px;height:28px;border-radius:50%;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.2s;padding:0;flex-shrink:0; }
   #theme-toggle:hover { background:var(--card-high);border-color:var(--violet); }
   #sync-dot { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
   #sync-indicator.saving #sync-dot { background:var(--amber);animation:blink 0.9s infinite; }
@@ -92,7 +93,7 @@
 
   /* ── SIDEBAR ── */
   .sidebar { position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:var(--sidebar-bg);display:flex;flex-direction:column;padding:0 14px 24px;z-index:100;border-right:1px solid var(--border); }
-  .sidebar-logo { font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.3px;padding:0 6px;margin-top:16px; }
+  .sidebar-logo { font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--violet);letter-spacing:-0.3px;padding:0 6px;margin-top:16px; }
 
   /* ── HUB SWITCHER ── */
   .hub-switcher { display:flex;flex-direction:column;gap:3px;padding:14px 10px 10px;border-bottom:1px solid var(--border);margin-bottom:4px; }
@@ -123,7 +124,7 @@
 
   /* ── PAGE HEADER ── */
   .page-eyebrow { font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:5px; }
-  .page-title { font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;letter-spacing:-0.5px;line-height:1.1;margin-bottom:6px; }
+  .page-title { font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;letter-spacing:-0.5px;line-height:1.1;margin-bottom:6px;color:var(--violet); }
   .page-sub { font-size:13px;color:var(--text2);margin-bottom:28px; }
 
   /* ── CARDS ── */
@@ -133,7 +134,7 @@
   .grid-2 > .card + .card,
   .grid-3 > .card + .card,
   .grid-4 > .card + .card { margin-top:0; }
-  .card-title { font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px; }
+  .card-title { font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--violet); }
   .card-title-left { display:flex;align-items:center;gap:8px; }
 
   /* ── STAT CARDS ── */
@@ -241,7 +242,7 @@
   .goal-bar-fill { height:100%;border-radius:999px;background:var(--violet);transition:width 0.3s; }
 
   /* ── SECTION TITLE ── */
-  .section-title { font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;margin:24px 0 14px;display:flex;justify-content:space-between;align-items:baseline; }
+  .section-title { font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;margin:24px 0 14px;display:flex;justify-content:space-between;align-items:baseline;color:var(--violet); }
   .section-title:first-child { margin-top:0; }
 
   /* ── NOTION FOLDER CARDS ── */
@@ -392,14 +393,14 @@
   </div>
 </div>
 
-<!-- SYNC INDICATOR -->
-<div id="sync-indicator">
-  <div id="sync-dot"></div>
-  <span id="sync-label">Synced</span>
+<!-- TOP BAR: theme toggle + sync indicator -->
+<div id="top-bar">
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</button>
+  <div id="sync-indicator">
+    <div id="sync-dot"></div>
+    <span id="sync-label">Synced</span>
+  </div>
 </div>
-
-<!-- THEME TOGGLE -->
-<button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</button>
 
 <!-- HAMBURGER -->
 <button class="hamburger" onclick="toggleSidebar()">☰</button>
