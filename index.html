@@ -92,7 +92,7 @@
   .card-title-left { display:flex;align-items:center;gap:8px; }
 
   /* ── STAT CARDS ── */
-  .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px; }
+  .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;align-items:stretch; }
   .stat-card { background:var(--card);border-radius:var(--radius-sm);padding:16px 18px;border:1px solid var(--border); }
   .stat-eyebrow { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px; }
   .stat-val { font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;line-height:1;color:var(--text); }
@@ -795,7 +795,44 @@ let userData = {
   milestones: [],
   monthNotes: {},
   hubTasks: [],
-  ticktickCache: { today: [], upcoming: [], fetchedAt: null }
+  ticktickCache: {
+    fetchedAt: "2026-05-06T20:00:00Z",
+    today: [
+      {"id":"69e3b1b7c02ed14fbbefd795","title":"For Goalhanger 🪩","due_date":"2026-05-05T23:00:00Z","priority":5},
+      {"id":"69f20dfc5b48513d04e0d352","title":"Move Neko passcode to iPhone","due_date":"2026-05-05T23:00:00Z","priority":3},
+      {"id":"69fb906b367791909bdbb62d","title":"Cat Outfit","due_date":"2026-05-05T23:00:00Z","priority":0},
+      {"id":"64663dbb7de4d1d0c7eff529","title":"Washing Away","due_date":"2026-05-05T23:00:00Z","priority":0},
+      {"id":"69d6f3010d11d103d4cb67eb","title":"Apple Watch - £","due_date":"2026-05-05T23:00:00Z","priority":0}
+    ],
+    upcoming: [
+      {"id":"68fdde498dcd5129b3e9f87d","title":"Cancel Amazon selling","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69bfcdc3631a11d29640a91c","title":"Add eggplant recipe back to the app","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69d6e21f5570d1a7cd087044","title":"Add clothes to Whering","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69d6f0df912d5103d4cb66c5","title":"Plan Spring Reset","due_date":"2026-05-06T23:00:00Z","priority":1},
+      {"id":"69e32847dd0d914fbbefcc98","title":"Plan for no snacking and fasting","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69eb29efdb515103d4cbb021","title":"Stop living room door closing","due_date":"2026-05-06T23:00:00Z","priority":3},
+      {"id":"69eb633bbcf2d1a66ef9d6bd","title":"Dinosaur Time","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69f64af03a3051674fea51ea","title":"Look for fungus cream","due_date":"2026-05-06T23:00:00Z","priority":5},
+      {"id":"69f9a4d8bd6851162c2c3db3","title":"Where do my little pouches/bags live?","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69d8c8e7d8e79102f06f1d67","title":"Chase Lloyds — move credit limit, close old card","due_date":"2026-05-07T23:00:00Z","priority":0},
+      {"id":"69d6e2a3094591a7cd0871a8","title":"Things to get from LDS","due_date":"2026-05-07T23:00:00Z","priority":0},
+      {"id":"69cb88c183365102f06d38a1","title":"To Sell","due_date":"2026-05-07T12:00:00Z","priority":1},
+      {"id":"64663dba78db11d0c7eff394","title":"Washing Out","due_date":"2026-05-07T23:00:00Z","priority":0},
+      {"id":"64663dba79bcd1d0c7eff1c2","title":"Washing On","due_date":"2026-05-07T23:00:00Z","priority":0},
+      {"id":"69a5d9a12757510310bdee6f","title":"iCloud - £2.99","due_date":"2026-05-07T23:00:00Z","priority":0},
+      {"id":"64663dbb751991d0c7eff8b3","title":"Clean Kitchen","due_date":"2026-05-08T23:00:00Z","priority":0},
+      {"id":"69995f0928fb51681b10cdd8","title":"Hoover Sofa","due_date":"2026-05-08T23:00:00Z","priority":0},
+      {"id":"69c917200d22d103d4c9cff4","title":"Sea Moss","due_date":"2026-05-08T23:00:00Z","priority":0},
+      {"id":"69f9f3242f519103d4d35fc4","title":"Pistachios","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69fa3c47e325916cf3a0c2a3","title":"Washing Up Liquid","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"697c9ddad6fa51035febe5b6","title":"Eyebrows","due_date":"2026-05-09T23:00:00Z","priority":0},
+      {"id":"679f78308f08e74c1e4d6f8b","title":"Clean Ensuite","due_date":"2026-05-09T23:00:00Z","priority":0},
+      {"id":"679f78308f08e74c1e4d7012","title":"Clean Bathroom","due_date":"2026-05-09T23:00:00Z","priority":0},
+      {"id":"691763e28d486c537df4a7fd","title":"Laser Hair Removal","due_date":"2026-05-10T19:00:00Z","priority":0},
+      {"id":"6917655a8d486c537df4a8fb","title":"Everything Shower","due_date":"2026-05-10T18:30:00Z","priority":0},
+      {"id":"69c286f76497110310eeabdb","title":"Titan 2 Elite - £300","due_date":"2026-05-12T23:00:00Z","priority":0}
+    ]
+  }
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -925,26 +962,25 @@ async function fetchCalendarWeek() {
     });
 
     const todayStr = new Date().toDateString();
-    el.innerHTML = Object.values(groups).map(g => {
+    const dayGroups = Object.values(groups);
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;">`
+      + dayGroups.map(g => {
       const isToday = g.date.toDateString() === todayStr;
       const label   = isToday ? 'Today'
-        : g.date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
-      return `<div class="day-group">
-        <div class="day-label ${isToday ? 'today-label' : ''}">${label}</div>
-        <div class="event-list">${g.evs.map(ev => {
+        : g.date.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      return `<div style="background:var(--bg2);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${isToday?'var(--teal)':'var(--violet)'};margin-bottom:8px;">${label}</div>
+        ${g.evs.map(ev => {
           const isAllDay = !ev.start.dateTime;
           const timeStr  = isAllDay ? 'All day'
             : new Date(ev.start.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-          return `<div class="event-row">
-            <div class="event-time">${timeStr}</div>
-            <div class="event-body">
-              <div class="event-title">${ev.summary || '(No title)'}</div>
-              ${ev.location ? `<div class="event-loc">📍 ${ev.location}</div>` : ''}
-            </div>
+          return `<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;color:var(--text3);min-width:44px;flex-shrink:0;padding-top:1px;">${timeStr}</div>
+            <div style="font-size:12px;color:var(--text);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ev.summary || '(No title)'}</div>
           </div>`;
-        }).join('')}</div>
+        }).join('')}
       </div>`;
-    }).join('');
+    }).join('') + `</div>`;
   } catch(e) {
     el.innerHTML = `<div class="error-msg">Could not load calendar: ${e.message}</div>`;
   }
