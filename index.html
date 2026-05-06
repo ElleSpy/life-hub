@@ -262,6 +262,42 @@
   .priority-medium { background:var(--amber-light);color:var(--amber); }
   .priority-low { background:var(--violet-light);color:var(--violet); }
 
+  /* ── TODOIST TASK ROW ── */
+  .td-task-row { display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border); }
+  .td-task-row:last-child { border-bottom:none; }
+  .td-check-btn { width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);background:none;cursor:pointer;flex-shrink:0;margin-top:2px;transition:all 0.15s;padding:0;display:flex;align-items:center;justify-content:center; }
+  .td-check-btn:hover { border-color:var(--violet);background:var(--violet-light); }
+  .td-check-btn.completing { border-color:var(--green);background:var(--green-light); }
+  .td-task-body { flex:1;min-width:0; }
+  .td-task-title { font-size:13px;color:var(--text);line-height:1.4; }
+  .td-task-title.td-done { text-decoration:line-through;opacity:0.45; }
+  .td-task-meta { display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap; }
+  .td-due { font-size:10px;color:var(--text3); }
+  .td-due.overdue { color:var(--red);font-weight:600; }
+  .td-project { font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--bg2);color:var(--text3); }
+  .td-pri { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
+
+  /* ── NOTES PAGE ── */
+  .notes-layout { display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start; }
+  .notes-sidebar { position:sticky;top:0; }
+  .notes-cat-item { display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);transition:all 0.14s;margin-bottom:2px; }
+  .notes-cat-item:hover { background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8); }
+  .notes-cat-item.active { background:var(--violet-light);color:var(--violet); }
+  .notes-cat-count { font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:rgba(255,255,255,0.08);color:var(--text3); }
+  .note-card { background:var(--bg2);border-radius:var(--radius-sm);padding:14px 16px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all 0.14s; }
+  .note-card:hover { border-color:var(--violet-mid);background:var(--card-high); }
+  .note-card-title { font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px; }
+  .note-card-preview { font-size:12px;color:var(--text3);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
+  .note-card-footer { font-size:10px;color:var(--text3);margin-top:6px; }
+  .note-editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:450;display:none;align-items:center;justify-content:center;padding:20px; }
+  .note-editor-overlay.open { display:flex; }
+  .note-editor { background:var(--card);border-radius:var(--radius);padding:26px;max-width:640px;width:100%;border:1px solid var(--border2);display:flex;flex-direction:column;gap:12px;max-height:90vh; }
+  .note-editor-title-input { background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;width:100%;outline:none;padding-bottom:8px; }
+  .note-editor-title-input::placeholder { color:var(--text3); }
+  .note-editor-body { flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;font-family:'Manrope',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;min-height:220px;line-height:1.7; }
+  .note-editor-body:focus { border-color:var(--violet); }
+  @media (max-width:900px) { .notes-layout { grid-template-columns:1fr; } .notes-sidebar { position:static; } }
+
   /* ── TOAST ── */
   .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:var(--text);border:1px solid var(--border2);padding:9px 20px;border-radius:999px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:600;opacity:0;transition:opacity 0.25s;pointer-events:none; }
   .toast.show { opacity:1; }
@@ -414,11 +450,11 @@
       <div id="today-events-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
     </div>
 
-    <!-- Today's Tasks (from TickTick via Drive cache) -->
+    <!-- Today's Tasks (live from Todoist) -->
     <div class="card">
       <div class="card-title">
         <div class="card-title-left">✅ Due Today</div>
-        <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank" style="font-size:11px;color:var(--text3);text-decoration:none;font-weight:500;">TickTick ↗</a>
+        <a href="https://app.todoist.com/app/today" target="_blank" style="font-size:11px;color:var(--text3);text-decoration:none;font-weight:500;">Todoist ↗</a>
       </div>
       <div id="today-tasks-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
     </div>
@@ -456,30 +492,31 @@
 <div id="page-tasks" class="page">
   <div class="page-eyebrow">Stay Organised</div>
   <div class="page-title">Tasks</div>
-  <div class="page-sub">Live from TickTick + your Hub tasks</div>
+  <div class="page-sub">Live from Todoist — tick tasks off without leaving this page</div>
 
   <div class="tab-bar">
-    <button class="etab active" onclick="switchTaskTab(this,'ticktick')">TickTick</button>
+    <button class="etab active" onclick="switchTaskTab(this,'todoist')">Todoist</button>
     <button class="etab" onclick="switchTaskTab(this,'hub')">Hub Tasks</button>
   </div>
 
-  <!-- TickTick tab -->
-  <div id="tasks-ticktick">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div style="font-size:11px;color:var(--text3);" id="tt-sync-note"></div>
-      <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open TickTick ↗</a>
-    </div>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-title">Today &amp; Overdue</div>
-        <div id="tt-today"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  <!-- Todoist tab -->
+  <div id="tasks-todoist">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="etab active" id="td-filter-today" onclick="setTodoistFilter('today',this)" style="font-size:11px;padding:5px 12px;">Today</button>
+        <button class="etab" id="td-filter-overdue" onclick="setTodoistFilter('overdue',this)" style="font-size:11px;padding:5px 12px;">Overdue</button>
+        <button class="etab" id="td-filter-upcoming" onclick="setTodoistFilter('upcoming',this)" style="font-size:11px;padding:5px 12px;">Next 7 Days</button>
+        <button class="etab" id="td-filter-all" onclick="setTodoistFilter('all',this)" style="font-size:11px;padding:5px 12px;">All</button>
       </div>
-      <div class="card">
-        <div class="card-title">Next 7 Days</div>
-        <div id="tt-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--text3);" id="td-status"></span>
+        <button class="btn-ghost" onclick="fetchTodoist()" style="font-size:11px;padding:5px 12px;">↻ Refresh</button>
+        <a href="https://app.todoist.com" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open Todoist ↗</a>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;">Tasks are cached — ask Claude to refresh anytime.</div>
+    <div class="card">
+      <div id="td-task-list"><div class="loading"><div class="spinner"></div>Loading tasks…</div></div>
+    </div>
   </div>
 
   <!-- Hub tasks tab -->
@@ -519,81 +556,98 @@
 <!-- ══ NOTES PAGE ══ -->
 <div id="page-notes" class="page">
   <div class="page-eyebrow">Remember Everything</div>
-  <div class="page-title">Notes</div>
-  <div class="page-sub">Your notes live in Notion — organised by folder.</div>
-
-  <div style="margin-bottom:24px;">
-    <a href="https://www.notion.so/3578ca7c10538109a866ee4b18437367" target="_blank"
-       class="btn-primary" style="text-decoration:none;font-size:14px;padding:12px 24px;">
-      📋 Open All Notes in Notion
-    </a>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px;">
+    <div class="page-title" style="margin-bottom:0;">Notes</div>
+    <button class="btn-primary" onclick="openNoteEditor(null)" style="flex-shrink:0;">+ New Note</button>
   </div>
+  <div class="page-sub">Saved to Google Drive — no third-party apps</div>
 
-  <div class="section-title" style="margin-top:0;">Jump to a folder</div>
-  <div class="folder-grid">
-    <a href="https://www.notion.so/3578ca7c105381589354e33d00674412" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">💼</div>
-      <div class="notion-folder-name">Work</div>
-      <div class="notion-folder-desc">Meetings, projects, new job prep</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c105381aabb3fdfb5b205c335" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🏃</div>
-      <div class="notion-folder-name">Fitness</div>
-      <div class="notion-folder-desc">Workout logs, plans, milestones</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c10538191b669d31594c41a0e" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">💰</div>
-      <div class="notion-folder-name">Finance</div>
-      <div class="notion-folder-desc">Budget notes, financial goals</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c105381deae48dd0bee65f8b3" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🏥</div>
-      <div class="notion-folder-name">Health</div>
-      <div class="notion-folder-desc">Appointments, health log, wellness</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c1053814db70ff986599454a0" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🎯</div>
-      <div class="notion-folder-name">Interests</div>
-      <div class="notion-folder-desc">Hobbies, TV, music</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c10538196a3c1d08a8fd29aed" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">📚</div>
-      <div class="notion-folder-name">Learning</div>
-      <div class="notion-folder-desc">Books, courses, articles</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c10538163acdcf8639bbe1ce9" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🌿</div>
-      <div class="notion-folder-name">Lifestyle</div>
-      <div class="notion-folder-desc">Home, routines, food, shopping</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c105381548e34c103fa310540" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🧍</div>
-      <div class="notion-folder-name">Personal</div>
-      <div class="notion-folder-desc">Reflections, goals, life admin</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c10538150a50dd61ad1c704bd" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">✈️</div>
-      <div class="notion-folder-name">Travel</div>
-      <div class="notion-folder-desc">Trip plans, packing lists</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c105381b28f60e26c12182b47" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">🤝</div>
-      <div class="notion-folder-name">Volunteering</div>
-      <div class="notion-folder-desc">Session notes, reflections</div>
-    </a>
-    <a href="https://www.notion.so/3578ca7c105381a5b2cbdb03a3e5cc22" target="_blank" class="notion-folder-card">
-      <div class="notion-folder-icon">📝</div>
-      <div class="notion-folder-name">General Notes</div>
-      <div class="notion-folder-desc">Quick captures, inbox</div>
-    </a>
-  </div>
+  <div class="notes-layout">
+    <!-- Category sidebar -->
+    <div class="notes-sidebar">
+      <div class="card" style="padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);padding:4px 12px 8px;">Categories</div>
+        <div class="notes-cat-item active" onclick="filterNotes('all',this)" id="nc-all">
+          <span>All Notes</span>
+          <span class="notes-cat-count" id="nc-count-all">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Work',this)">
+          <span>💼 Work</span>
+          <span class="notes-cat-count" id="nc-count-Work">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Personal',this)">
+          <span>🧍 Personal</span>
+          <span class="notes-cat-count" id="nc-count-Personal">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Health',this)">
+          <span>🏥 Health</span>
+          <span class="notes-cat-count" id="nc-count-Health">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Fitness',this)">
+          <span>🏃 Fitness</span>
+          <span class="notes-cat-count" id="nc-count-Fitness">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Finance',this)">
+          <span>💰 Finance</span>
+          <span class="notes-cat-count" id="nc-count-Finance">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Travel',this)">
+          <span>✈️ Travel</span>
+          <span class="notes-cat-count" id="nc-count-Travel">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Volunteering',this)">
+          <span>🤝 Volunteering</span>
+          <span class="notes-cat-count" id="nc-count-Volunteering">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('Learning',this)">
+          <span>📚 Learning</span>
+          <span class="notes-cat-count" id="nc-count-Learning">0</span>
+        </div>
+        <div class="notes-cat-item" onclick="filterNotes('General',this)">
+          <span>📝 General</span>
+          <span class="notes-cat-count" id="nc-count-General">0</span>
+        </div>
+      </div>
 
-  <!-- Quick captures stored in Drive -->
-  <div class="section-title">Quick Captures</div>
-  <div class="card">
-    <div id="quick-captures-list">
-      <div class="empty-state">No quick captures yet — use the Today page to add one.</div>
+      <!-- Quick captures -->
+      <div class="card" style="padding:12px;margin-top:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);padding:4px 12px 8px;">Quick Captures</div>
+        <div id="quick-captures-list" style="padding:0 4px;">
+          <div class="empty-state">None yet</div>
+        </div>
+      </div>
     </div>
+
+    <!-- Notes list -->
+    <div>
+      <div id="notes-list"><div class="empty-state" style="padding:32px 0;text-align:center;color:var(--text3);">No notes yet — create your first one</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE EDITOR OVERLAY -->
+<div class="note-editor-overlay" id="note-editor-overlay">
+  <div class="note-editor">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <select class="form-select" id="note-editor-cat" style="width:auto;min-width:140px;padding:6px 10px;font-size:12px;">
+        <option value="General">📝 General</option>
+        <option value="Work">💼 Work</option>
+        <option value="Personal">🧍 Personal</option>
+        <option value="Health">🏥 Health</option>
+        <option value="Fitness">🏃 Fitness</option>
+        <option value="Finance">💰 Finance</option>
+        <option value="Travel">✈️ Travel</option>
+        <option value="Volunteering">🤝 Volunteering</option>
+        <option value="Learning">📚 Learning</option>
+      </select>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn-ghost" onclick="closeNoteEditor()" style="font-size:12px;padding:6px 14px;">Cancel</button>
+        <button class="btn-primary" onclick="saveNote()" style="font-size:12px;padding:6px 18px;">Save</button>
+      </div>
+    </div>
+    <input type="text" class="note-editor-title-input" id="note-editor-title" placeholder="Note title…">
+    <textarea class="note-editor-body" id="note-editor-body" placeholder="Write your note here…"></textarea>
+    <input type="hidden" id="note-editor-id">
   </div>
 </div>
 
@@ -682,8 +736,8 @@
 
   <div class="section-title">Productivity</div>
   <div class="link-grid">
-    <div class="link-card" onclick="window.open('https://ticktick.com','_blank')">
-      <div class="link-emoji">✅</div><div class="link-text"><div class="link-name">TickTick</div><div class="link-desc">Task management</div></div>
+    <div class="link-card" onclick="window.open('https://app.todoist.com','_blank')">
+      <div class="link-emoji">✅</div><div class="link-text"><div class="link-name">Todoist</div><div class="link-desc">Task management</div></div>
     </div>
     <div class="link-card" onclick="window.open('https://calendar.google.com','_blank')">
       <div class="link-emoji">📅</div><div class="link-text"><div class="link-name">Google Calendar</div><div class="link-desc">Schedule &amp; events</div></div>
@@ -746,7 +800,7 @@
   <div class="card">
     <div style="font-size:13px;color:var(--text2);line-height:1.8;">
       <strong>Life Hub</strong> — Your personal dashboard.<br>
-      <span style="font-size:11px;color:var(--text3);">Data syncs to Google Drive · Calendar via Google Calendar API · Tasks via TickTick</span>
+      <span style="font-size:11px;color:var(--text3);">Data syncs to Google Drive · Calendar via Google Calendar API · Tasks via Todoist</span>
     </div>
   </div>
 </div>
@@ -805,6 +859,7 @@
 ═══════════════════════════════════════════════════════════ */
 const CLIENT_ID       = '56935101632-caejt9kn3bp3t3c8t3cc1csk7m6h4d3h.apps.googleusercontent.com';
 const DRIVE_FILE_NAME = 'life_hub_data.json';
+const TODOIST_TOKEN   = '60e39f89daf91a6d7f891892d6e565b1c8322b54';
 const SCOPES          = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
 
 /* ═══════════════════════════════════════════════════════════
@@ -816,6 +871,7 @@ let gSyncTimer   = null;
 
 let userData = {
   notes: [],          // quick captures
+  notesData: [],      // structured notes (Drive-backed)
   goals: [],
   bucketList: [],
   travelWishlist: [],
@@ -926,7 +982,7 @@ function launchApp() {
   fetchCalendarToday();
   fetchCalendarWeek();
   buildCalendarIframe();
-  loadTickTickTasks();
+  fetchTodoist();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1094,102 +1150,268 @@ async function fetchCalendarWeek() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TICKTICK (loaded from Drive cache — refreshed on sign-in)
-   The cache is stored in userData.ticktickCache in Drive.
-   Since TickTick doesn't have a browser-accessible API,
-   we display the cached data and show last-fetched time.
-   To refresh: Claude can update the cache via the Cowork MCP.
+   TODOIST — live fetch + tick off without leaving the page
 ═══════════════════════════════════════════════════════════ */
-function loadTickTickTasks() {
-  renderTickTickToday();
-  renderTickTickUpcoming();
-}
+let tdAllTasks    = [];
+let tdFilter      = 'today';
+let tdCompletingIds = new Set();
 
-function renderTickTickToday() {
-  const el  = document.getElementById('today-tasks-list');
-  const el2 = document.getElementById('tt-today');
-  const cache = userData.ticktickCache || {};
-  const allTasks = cache.today || [];
-
-  // Compare using local date strings so BST tasks don't bleed into tomorrow
-  const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in local tz
-
-  // Filter to only tasks due today or earlier
-  const tasks = allTasks.filter(t => {
-    if (!t.due_date) return true;
-    const localDueStr = new Date(t.due_date).toLocaleDateString('en-CA');
-    return localDueStr <= todayStr;
-  });
-
-  if (!tasks.length) {
-    const msg = '<div class="empty-state">No tasks due today ✓</div>';
-    if (el) el.innerHTML = msg;
-    if (el2) el2.innerHTML = msg;
-    document.getElementById('stat-tasks').textContent = '0';
-    document.getElementById('stat-tasks-sub').textContent = 'all clear';
-    return;
-  }
-
-  // Sort purely by local due date ascending, then priority desc within same day
-  tasks.sort((a, b) => {
-    const da = a.due_date ? new Date(a.due_date).toLocaleDateString('en-CA') : '9999-12-31';
-    const db = b.due_date ? new Date(b.due_date).toLocaleDateString('en-CA') : '9999-12-31';
-    if (da !== db) return da < db ? -1 : 1;
-    return (b.priority || 0) - (a.priority || 0);
-  });
-
-  let overdueCount = 0;
-
-  // Compact pill-style list
-  const html = '<div style="display:flex;flex-direction:column;gap:4px;">' + tasks.map(t => {
-    const due       = t.due_date ? new Date(t.due_date) : null;
-    const localDue  = due ? due.toLocaleDateString('en-CA') : null;
-    const isPast    = localDue && localDue < todayStr;
-    if (isPast) overdueCount++;
-    const priColor  = t.priority === 5 ? 'var(--red)' : t.priority === 3 ? 'var(--amber)' : t.priority === 1 ? 'var(--blue)' : 'var(--border2)';
-    const overdueTag = isPast ? `<span style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-light);padding:1px 5px;border-radius:3px;flex-shrink:0;">OVERDUE</span>` : '';
-    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
-      <span style="width:6px;height:6px;border-radius:50%;background:${priColor};flex-shrink:0;"></span>
-      <span style="font-size:12px;color:var(--text);flex:1;line-height:1.3;">${t.title}</span>
-      ${overdueTag}
-    </div>`;
-  }).join('') + '</div>';
-
-  if (el) el.innerHTML = html;
-  if (el2) el2.innerHTML = html;
-
-  document.getElementById('stat-tasks').textContent = tasks.length;
-  document.getElementById('stat-tasks-sub').textContent = overdueCount > 0 ? overdueCount + ' overdue' : 'due today';
-
-  if (cache.fetchedAt) {
-    const timeStr = new Date(cache.fetchedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-    const syncNote = document.getElementById('tt-sync-note');
-    if (syncNote) syncNote.textContent = `Cached ${timeStr}`;
+async function fetchTodoist() {
+  const el = document.getElementById('td-task-list');
+  const statusEl = document.getElementById('td-status');
+  if (el) el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  if (statusEl) statusEl.textContent = '';
+  try {
+    const res = await fetch('https://api.todoist.com/rest/v2/tasks', {
+      headers: { Authorization: 'Bearer ' + TODOIST_TOKEN }
+    });
+    if (!res.ok) throw new Error('Todoist API ' + res.status);
+    tdAllTasks = await res.json();
+    if (statusEl) statusEl.textContent = 'Updated just now';
+    renderTodoistTasks();
+    renderTodoistTodayCard();
+  } catch(e) {
+    if (el) el.innerHTML = `<div class="error-msg">Could not load Todoist tasks: ${e.message}</div>`;
+    if (statusEl) statusEl.textContent = 'Error loading';
   }
 }
 
-function renderTickTickUpcoming() {
-  const el = document.getElementById('tt-upcoming');
+function setTodoistFilter(f, btn) {
+  tdFilter = f;
+  // Only update the filter mini-tabs, not the main tab bar
+  ['today','overdue','upcoming','all'].forEach(k => {
+    const b = document.getElementById('td-filter-' + k);
+    if (b) b.classList.toggle('active', k === f);
+  });
+  renderTodoistTasks();
+}
+
+function renderTodoistTasks() {
+  const el = document.getElementById('td-task-list');
   if (!el) return;
-  const tasks = (userData.ticktickCache || {}).upcoming || [];
+
+  const todayStr = new Date().toLocaleDateString('en-CA');
+  const in7Str   = new Date(Date.now() + 7*86400000).toLocaleDateString('en-CA');
+
+  let tasks = tdAllTasks.filter(t => !tdCompletingIds.has(t.id));
+
+  if (tdFilter === 'today') {
+    tasks = tasks.filter(t => t.due && t.due.date <= todayStr);
+  } else if (tdFilter === 'overdue') {
+    tasks = tasks.filter(t => t.due && t.due.date < todayStr);
+  } else if (tdFilter === 'upcoming') {
+    tasks = tasks.filter(t => t.due && t.due.date > todayStr && t.due.date <= in7Str);
+  }
+
+  // Sort: priority desc (4=urgent in Todoist), then due date asc
+  tasks.sort((a,b) => {
+    if (b.priority !== a.priority) return b.priority - a.priority;
+    const da = a.due ? a.due.date : '9999-12-31';
+    const db = b.due ? b.due.date : '9999-12-31';
+    return da < db ? -1 : da > db ? 1 : 0;
+  });
 
   if (!tasks.length) {
-    el.innerHTML = '<div class="empty-state">No upcoming tasks</div>';
+    el.innerHTML = '<div class="empty-state">No tasks for this filter ✓</div>';
     return;
   }
+
+  // Priority colours: Todoist 4=urgent, 3=high, 2=medium, 1=normal
+  const priColor = p => p === 4 ? 'var(--red)' : p === 3 ? 'var(--amber)' : p === 2 ? 'var(--blue)' : 'var(--border2)';
 
   el.innerHTML = '<div class="task-list">' + tasks.map(t => {
-    const due    = t.due_date ? new Date(t.due_date) : null;
-    const dueStr = due ? due.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
-    const dotClass = t.priority === 5 ? 'p5' : t.priority === 3 ? 'p3' : '';
-    return `<div class="task-row">
-      <div class="task-dot ${dotClass}"></div>
-      <div class="task-body">
-        <div class="task-title">${t.title}</div>
-        ${dueStr ? `<div class="task-meta">${dueStr}</div>` : ''}
+    const due     = t.due ? t.due.date : null;
+    const isOver  = due && due < todayStr;
+    const dueDisp = due ? new Date(due + 'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
+    const projTag = t.project_id ? `<span class="td-project">${t.project_id}</span>` : '';
+    return `<div class="td-task-row" id="td-row-${t.id}">
+      <button class="td-check-btn" onclick="completeTodoistTask('${t.id}')" title="Mark complete" aria-label="Complete task"></button>
+      <div class="td-task-body">
+        <div class="td-task-title">${t.content}</div>
+        <div class="td-task-meta">
+          <span class="td-pri" style="background:${priColor(t.priority)};margin-top:3px;"></span>
+          ${dueDisp ? `<span class="td-due${isOver?' overdue':''}">${dueDisp}</span>` : ''}
+          ${t.description ? `<span class="td-project">${t.description.substring(0,30)}</span>` : ''}
+        </div>
       </div>
     </div>`;
   }).join('') + '</div>';
+}
+
+async function completeTodoistTask(id) {
+  const btn = document.querySelector(`#td-row-${id} .td-check-btn`);
+  if (btn) { btn.classList.add('completing'); btn.innerHTML = '✓'; }
+
+  try {
+    const res = await fetch(`https://api.todoist.com/rest/v2/tasks/${id}/close`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + TODOIST_TOKEN }
+    });
+    if (!res.ok) throw new Error('Todoist ' + res.status);
+
+    // Remove from local list and re-render
+    tdAllTasks = tdAllTasks.filter(t => t.id !== id);
+    tdCompletingIds.delete(id);
+
+    // Animate the row out
+    const row = document.getElementById('td-row-' + id);
+    if (row) {
+      row.style.transition = 'opacity 0.35s, max-height 0.35s';
+      row.style.opacity = '0';
+      row.style.maxHeight = '0';
+      row.style.overflow = 'hidden';
+      setTimeout(() => renderTodoistTasks(), 380);
+    }
+    renderTodoistTodayCard();
+    showToast('Task done ✓');
+  } catch(e) {
+    tdCompletingIds.delete(id);
+    if (btn) { btn.classList.remove('completing'); btn.innerHTML = ''; }
+    showToast('Could not complete task — try again');
+  }
+}
+
+function renderTodoistTodayCard() {
+  // Populate Today page task card with Todoist data
+  const el = document.getElementById('today-tasks-list');
+  if (!el) return;
+
+  const todayStr = new Date().toLocaleDateString('en-CA');
+  const tasks = tdAllTasks.filter(t => t.due && t.due.date <= todayStr);
+
+  document.getElementById('stat-tasks').textContent = tasks.length;
+  document.getElementById('stat-tasks-sub').textContent = tasks.filter(t => t.due.date < todayStr).length > 0
+    ? tasks.filter(t => t.due.date < todayStr).length + ' overdue'
+    : 'due today';
+
+  if (!tasks.length) {
+    el.innerHTML = '<div class="empty-state">No tasks due today ✓</div>';
+    return;
+  }
+
+  const priColor = p => p === 4 ? 'var(--red)' : p === 3 ? 'var(--amber)' : p === 2 ? 'var(--blue)' : 'var(--border2)';
+  el.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px;">'
+    + tasks.slice(0,8).map(t => {
+    const isOver = t.due.date < todayStr;
+    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
+      <span style="width:6px;height:6px;border-radius:50%;background:${priColor(t.priority)};flex-shrink:0;"></span>
+      <span style="font-size:12px;color:var(--text);flex:1;line-height:1.3;">${t.content}</span>
+      ${isOver ? `<span style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-light);padding:1px 5px;border-radius:3px;flex-shrink:0;">OVERDUE</span>` : ''}
+    </div>`;
+  }).join('') + (tasks.length > 8 ? `<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px 0;">+${tasks.length-8} more</div>` : '') + '</div>';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NOTES — Drive-backed notepad (replaces Notion)
+═══════════════════════════════════════════════════════════ */
+let notesFilter = 'all';
+
+function renderNotesList() {
+  const el = document.getElementById('notes-list');
+  if (!el) return;
+
+  // userData.notesData holds the structured notes (separate from quick captures in userData.notes)
+  const allNotes = userData.notesData || [];
+  const filtered = notesFilter === 'all' ? allNotes : allNotes.filter(n => n.category === notesFilter);
+
+  // Update category counts
+  const cats = ['Work','Personal','Health','Fitness','Finance','Travel','Volunteering','Learning','General'];
+  const countEl = document.getElementById('nc-count-all');
+  if (countEl) countEl.textContent = allNotes.length;
+  cats.forEach(c => {
+    const cel = document.getElementById('nc-count-' + c);
+    if (cel) cel.textContent = allNotes.filter(n => n.category === c).length;
+  });
+
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:32px 0;text-align:center;color:var(--text3);">${notesFilter === 'all' ? 'No notes yet — create your first one' : 'No notes in this category'}</div>`;
+    return;
+  }
+
+  const catEmojis = { Work:'💼',Personal:'🧍',Health:'🏥',Fitness:'🏃',Finance:'💰',Travel:'✈️',Volunteering:'🤝',Learning:'📚',General:'📝' };
+
+  el.innerHTML = filtered.map(n => {
+    const dateStr = new Date(n.updatedAt || n.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    const preview = n.body ? n.body.replace(/\n/g,' ').substring(0,100) : '';
+    return `<div class="note-card" onclick="openNoteEditor('${n.id}')">
+      <div class="note-card-title">
+        <span>${n.title || 'Untitled'}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <span style="font-size:11px;background:var(--bg2);color:var(--text3);padding:2px 7px;border-radius:4px;font-weight:600;">${catEmojis[n.category]||'📝'} ${n.category}</span>
+          <button class="btn-row-del" onclick="event.stopPropagation();deleteNote2('${n.id}')" style="display:inline-flex;">✕</button>
+        </div>
+      </div>
+      ${preview ? `<div class="note-card-preview">${preview}</div>` : ''}
+      <div class="note-card-footer">Last edited ${dateStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterNotes(cat, btn) {
+  notesFilter = cat;
+  document.querySelectorAll('.notes-cat-item').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderNotesList();
+}
+
+function openNoteEditor(id) {
+  const overlay = document.getElementById('note-editor-overlay');
+  const titleInput = document.getElementById('note-editor-title');
+  const bodyInput  = document.getElementById('note-editor-body');
+  const catSelect  = document.getElementById('note-editor-cat');
+  const hiddenId   = document.getElementById('note-editor-id');
+
+  if (id) {
+    const note = (userData.notesData || []).find(n => n.id == id);
+    if (!note) return;
+    titleInput.value = note.title || '';
+    bodyInput.value  = note.body  || '';
+    catSelect.value  = note.category || 'General';
+    hiddenId.value   = note.id;
+  } else {
+    titleInput.value = '';
+    bodyInput.value  = '';
+    catSelect.value  = notesFilter !== 'all' ? notesFilter : 'General';
+    hiddenId.value   = '';
+  }
+
+  overlay.classList.add('open');
+  setTimeout(() => titleInput.focus(), 50);
+}
+
+function closeNoteEditor() {
+  document.getElementById('note-editor-overlay').classList.remove('open');
+}
+
+function saveNote() {
+  const title = document.getElementById('note-editor-title').value.trim();
+  const body  = document.getElementById('note-editor-body').value;
+  const cat   = document.getElementById('note-editor-cat').value;
+  const id    = document.getElementById('note-editor-id').value;
+
+  if (!title && !body.trim()) return showToast('Write something first');
+
+  if (!userData.notesData) userData.notesData = [];
+
+  if (id) {
+    const note = userData.notesData.find(n => n.id == id);
+    if (note) { note.title = title || 'Untitled'; note.body = body; note.category = cat; note.updatedAt = new Date().toISOString(); }
+  } else {
+    userData.notesData.unshift({ id: Date.now(), title: title || 'Untitled', body, category: cat, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  }
+
+  closeNoteEditor();
+  scheduleSave();
+  renderNotesList();
+  showToast('Note saved');
+}
+
+function deleteNote2(id) {
+  if (!confirm('Delete this note?')) return;
+  userData.notesData = (userData.notesData || []).filter(n => n.id != id);
+  scheduleSave();
+  renderNotesList();
+  showToast('Deleted');
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1325,10 +1547,12 @@ function switchPage(name) {
 }
 
 function switchTaskTab(btn, tab) {
-  document.querySelectorAll('.etab').forEach(b => b.classList.remove('active'));
+  // Only toggle the top-level tab bar (not filter buttons inside todoist tab)
+  const tabBar = btn.closest('.tab-bar');
+  if (tabBar) tabBar.querySelectorAll('.etab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tasks-ticktick').style.display = tab === 'ticktick' ? '' : 'none';
-  document.getElementById('tasks-hub').style.display      = tab === 'hub'      ? '' : 'none';
+  document.getElementById('tasks-todoist').style.display = tab === 'todoist' ? '' : 'none';
+  document.getElementById('tasks-hub').style.display     = tab === 'hub'     ? '' : 'none';
 }
 
 function refreshToday() {
@@ -1612,8 +1836,8 @@ function renderAllData() {
   renderTravelList();
   renderMilestoneList();
   renderMonthGrid();
+  renderNotesList();
   updateGoalsStat();
-  loadTickTickTasks();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1622,6 +1846,11 @@ function renderAllData() {
 document.addEventListener('DOMContentLoaded', () => {
   updateGreeting();
   calculateCountdown();
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('note-editor-overlay').classList.contains('open')) closeNoteEditor();
+    }
+  });
 });
 </script>
 </body>
