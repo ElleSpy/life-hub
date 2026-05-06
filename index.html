@@ -8,313 +8,307 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
-    --bg:            #131313;
-    --bg2:           #1b1b1c;
-    --card: #202020;
-    --card-high:     #2a2a2a;
-    --text:          #e5e2e1;
-    --text2:         #b9cac4;
-    --text3:         #83948f;
-    --border:        rgba(255,255,255,0.08);
-    --violet:        #a78bfa;
-    --violet-light:  rgba(167,139,250,0.12);
-    --violet-mid:    rgba(167,139,250,0.25);
-    --teal:          #00f5d4;
-    --teal-light:    rgba(0,245,212,0.12);
-    --teal-mid:      rgba(0,245,212,0.25);
-    --coral:         #ff5f57;
-    --coral-light:   rgba(255,95,87,0.12);
-    --amber:         #ffe600;
-    --amber-light:   rgba(255,230,0,0.12);
-    --blue:          #00cfff;
-    --blue-light:    rgba(0,207,255,0.12);
-    --blue-mid:      rgba(0,207,255,0.25);
-    --purple:        #d44dff;
-    --purple-light:  rgba(212,77,255,0.12);
-    --red:           #ff3b5c;
-    --red-light:     rgba(255,59,92,0.12);
-    --shadow:        0 2px 16px rgba(0,0,0,0.4);
-    --shadow-lg:     0 8px 40px rgba(0,0,0,0.6);
-    --radius:        16px;
-    --radius-sm:     10px;
-    --sidebar:       240px;
+    --bg:           #0f0f0f;
+    --bg2:          #181818;
+    --card:         #1e1e1e;
+    --card-high:    #272727;
+    --text:         #e8e5e3;
+    --text2:        #a8b8b2;
+    --text3:        #637069;
+    --border:       rgba(255,255,255,0.07);
+    --border2:      rgba(255,255,255,0.12);
+    --violet:       #a78bfa;
+    --violet-light: rgba(167,139,250,0.1);
+    --violet-mid:   rgba(167,139,250,0.22);
+    --teal:         #00e5c4;
+    --teal-light:   rgba(0,229,196,0.1);
+    --coral:        #ff6b6b;
+    --coral-light:  rgba(255,107,107,0.1);
+    --amber:        #fbbf24;
+    --amber-light:  rgba(251,191,36,0.1);
+    --blue:         #38bdf8;
+    --blue-light:   rgba(56,189,248,0.1);
+    --green:        #34d399;
+    --green-light:  rgba(52,211,153,0.1);
+    --red:          #f87171;
+    --red-light:    rgba(248,113,113,0.1);
+    --shadow:       0 1px 12px rgba(0,0,0,0.5);
+    --shadow-lg:    0 8px 40px rgba(0,0,0,0.7);
+    --radius:       14px;
+    --radius-sm:    9px;
+    --sidebar:      220px;
   }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
 
-/* SYNC OVERLAY */
-#sync-overlay { position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
-#sync-overlay.hidden { display:none; }
-.sync-card { background:var(--card);border-radius:20px;padding:40px 44px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.12);text-align:center; }
-.sync-logo { font-family:'Space Grotesk', sans-serif;font-size:28px;font-weight:700;margin-bottom:4px; }
-.sync-sub { font-size:13px;color:var(--text3);margin-bottom:24px; }
-.sync-btn { display:inline-flex;align-items:center;gap:10px;padding:13px 24px;background:var(--violet);color:#fff;border:none;border-radius:999px;font-family:'Manrope', sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s;margin-bottom:12px;width:100%;justify-content:center; }
-.sync-btn:hover { opacity:0.85; }
-.sync-btn-secondary { display:inline-flex;align-items:center;gap:10px;padding:11px 24px;background:none;color:var(--text2);border:1.5px solid var(--border);border-radius:999px;font-family:'Manrope', sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:border-color 0.15s;width:100%;justify-content:center; }
-.sync-btn-secondary:hover { border-color:var(--on-surface,#e5e2e1);color:var(--on-surface,#e5e2e1); }
-.sync-setup { background:var(--bg2);border-radius:12px;padding:18px;text-align:left;margin-top:16px; }
-.sync-setup-title { font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:'Manrope', sans-serif;margin-bottom:10px; }
-.sync-step { font-size:12.5px;color:var(--text2);padding:6px 0;display:flex;gap:10px;border-bottom:1px solid var(--border);line-height:1.5; }
-.sync-step:last-child { border-bottom:none; }
-.sync-step-num { font-family:'Manrope', sans-serif;font-size:11px;color:var(--text3);flex-shrink:0;padding-top:2px; }
-.sync-input-wrap { margin-top:14px; }
-.sync-input { width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);font-family:'Manrope', sans-serif;font-size:13px;background:var(--bg);color:var(--on-surface,#e5e2e1);outline:none; }
-.sync-input:focus { border-color:var(--violet); }
-#sync-indicator { position:fixed;top:14px;right:18px;z-index:500;font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;font-family:'Manrope', sans-serif;display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);transition:all 0.3s; }
-#sync-dot { width:7px;height:7px;border-radius:50%;background:var(--violet); }
-#sync-indicator.saving #sync-dot { background:var(--amber);animation:pulse 0.8s infinite; }
-#sync-indicator.error #sync-dot { background:var(--red); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  /* ── SIGN-IN OVERLAY ── */
+  #signin-overlay { position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
+  #signin-overlay.hidden { display:none; }
+  .signin-card { background:var(--card);border-radius:20px;padding:44px 48px;max-width:440px;width:100%;border:1px solid var(--border2);text-align:center; }
+  .signin-logo { font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px; }
+  .signin-sub { font-size:13px;color:var(--text3);margin-bottom:32px; }
+  .signin-btn { display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 24px;background:var(--violet);color:#fff;border:none;border-radius:999px;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity 0.15s;margin-bottom:12px; }
+  .signin-btn:hover { opacity:0.88; }
+  .signin-note { font-size:11.5px;color:var(--text3);line-height:1.6;margin-top:20px; }
 
-/* SIDEBAR */
-.sidebar { position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:#0e0e0e;display:flex;flex-direction:column;padding:24px 16px;z-index:100;overflow-y:auto; }
-.sidebar-logo { font-family:'Space Grotesk', sans-serif;font-size:22px;color:#fff;font-weight:700;line-height:1.2; }
-.sidebar-sub { font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;font-family:'Manrope', sans-serif;letter-spacing:0.05em;margin-bottom:24px; }
-.nav-label { font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:10px 0 4px;font-family:'Manrope', sans-serif; }
-.nav-item { display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:rgba(255,255,255,0.55);font-size:13.5px;margin-bottom:2px;cursor:pointer;transition:all 0.15s; }
-.nav-item:hover { background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85); }
-.nav-item.active { background:var(--violet-light);color:var(--violet);font-weight:500; }
-.nav-icon { font-size:16px; }
-.sidebar-footer { margin-top:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08); }
-.btn-export { width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);color:rgba(255,255,255,0.6);font-size:11px;cursor:pointer;font-family:'Manrope', sans-serif;transition:all 0.15s; }
-.btn-export:hover { background:rgba(255,255,255,0.14);color:#fff; }
+  /* ── SYNC INDICATOR ── */
+  #sync-indicator { position:fixed;top:14px;right:16px;z-index:500;font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;font-family:'Manrope',sans-serif;display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow); }
+  #sync-dot { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
+  #sync-indicator.saving #sync-dot { background:var(--amber);animation:blink 0.9s infinite; }
+  #sync-indicator.error #sync-dot { background:var(--red); }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.25} }
 
-/* NOTION FOLDER CARDS */
-.notion-folder-card { display:flex;flex-direction:column;gap:4px;padding:18px 20px;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);text-decoration:none;color:var(--text);transition:all 0.18s;cursor:pointer; }
-.notion-folder-card:hover { background:var(--card-high);border-color:var(--violet-mid);transform:translateY(-2px);box-shadow:0 6px 24px rgba(167,139,250,0.15); }
-.notion-folder-icon { font-size:26px;margin-bottom:4px; }
-.notion-folder-name { font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text); }
-.notion-folder-desc { font-size:12px;color:var(--text3);line-height:1.4; }
+  /* ── SIDEBAR ── */
+  .sidebar { position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:#0a0a0a;display:flex;flex-direction:column;padding:24px 14px;z-index:100;border-right:1px solid var(--border); }
+  .sidebar-logo { font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;padding:0 6px; }
+  .sidebar-user { font-size:11px;color:var(--text3);padding:0 6px;margin-top:3px;margin-bottom:22px; }
+  .nav-section { font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);padding:10px 6px 4px; }
+  .nav-item { display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin-bottom:1px;cursor:pointer;transition:all 0.14s;white-space:nowrap; }
+  .nav-item:hover { background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8); }
+  .nav-item.active { background:var(--violet-light);color:var(--violet); }
+  .nav-icon { font-size:15px;flex-shrink:0; }
+  .sidebar-footer { margin-top:auto;padding-top:16px;border-top:1px solid var(--border); }
+  .btn-signout { width:100%;padding:8px 10px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;font-family:'Manrope',sans-serif;cursor:pointer;transition:all 0.14s;text-align:left; }
+  .btn-signout:hover { color:var(--red);border-color:var(--red-light); }
 
-/* HAMBURGER */
-.hamburger { display:none;position:fixed;top:14px;left:14px;z-index:200;background:#0e0e0e;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#e5e2e1;font-size:16px; }
-.sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:90; }
+  /* ── HAMBURGER ── */
+  .hamburger { display:none;position:fixed;top:14px;left:14px;z-index:200;background:#0a0a0a;border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:15px; }
+  .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90; }
 
-/* MAIN */
-.main { margin-left:var(--sidebar);min-height:100vh;padding:36px 32px 60px; }
-.page { display:none; }
-.page.active { display:block; }
+  /* ── MAIN ── */
+  .main { margin-left:var(--sidebar);min-height:100vh;padding:36px 32px 72px; }
+  .page { display:none; }
+  .page.active { display:block; }
 
-/* PAGE HEADER */
-.page-eyebrow { font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);font-family:'Manrope', sans-serif;margin-bottom:6px; }
-.page-title { font-family:'Space Grotesk', sans-serif;font-size:34px;font-weight:700;line-height:1.1; }
-.page-sub { font-size:14px;color:var(--text2);margin-top:6px;margin-bottom:28px; }
+  /* ── PAGE HEADER ── */
+  .page-eyebrow { font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:5px; }
+  .page-title { font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.1;margin-bottom:6px; }
+  .page-sub { font-size:13px;color:var(--text2);margin-bottom:28px; }
 
-/* CARDS */
-.card { background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.1); }
-.card-title { font-family:'Space Grotesk', sans-serif;font-size:17px;font-weight:500;margin-bottom:4px; }
-.card-sub { font-size:12px;color:var(--text2); }
+  /* ── CARDS ── */
+  .card { background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--border); }
+  .card + .card { margin-top:14px; }
+  .card-title { font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px; }
+  .card-title-left { display:flex;align-items:center;gap:8px; }
 
-/* STAT CARDS */
-.stat-card { background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--border); }
-.stat-val { font-family:'Space Grotesk', sans-serif;font-size:28px;font-weight:700;line-height:1; }
-.stat-label { font-size:12px;color:var(--text2);margin-top:5px; }
-.stat-sub { font-size:11px;color:var(--text3);margin-top:2px; }
-.stat-eyebrow { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-family:'Manrope', sans-serif;margin-bottom:8px; }
+  /* ── STAT CARDS ── */
+  .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px; }
+  .stat-card { background:var(--card);border-radius:var(--radius-sm);padding:16px 18px;border:1px solid var(--border); }
+  .stat-eyebrow { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px; }
+  .stat-val { font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;line-height:1;color:var(--text); }
+  .stat-sub { font-size:11px;color:var(--text3);margin-top:4px; }
+  .stat-card.accent-violet .stat-val { color:var(--violet); }
+  .stat-card.accent-teal .stat-val { color:var(--teal); }
+  .stat-card.accent-amber .stat-val { color:var(--amber); }
 
-/* GRIDS */
-.grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
-.grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:16px; }
-.grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }
+  /* ── TWO-COLUMN TODAY LAYOUT ── */
+  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px; }
 
-/* BADGES & PILLS */
-.badge { display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px; }
-.badge-violet { background:var(--violet-light);color:var(--violet); }
-.badge-teal { background:var(--teal-light);color:var(--teal); }
-.badge-coral { background:var(--coral-light);color:var(--coral); }
-.badge-amber { background:var(--amber-light);color:var(--amber); }
-.badge-blue { background:var(--blue-light);color:var(--blue); }
-.badge-purple { background:var(--purple-light);color:var(--purple); }
-.badge-red { background:var(--red-light);color:var(--red); }
-.pill-sm { font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;font-family:'Manrope', sans-serif;display:inline-flex; }
-.pill-violet { background:var(--violet-light);color:var(--violet); }
-.pill-teal { background:var(--teal-light);color:var(--teal); }
-.pill-blue { background:var(--blue-light);color:var(--blue); }
-.pill-muted { background:var(--bg2);color:var(--text2); }
-.pill-red { background:var(--red-light);color:var(--red); }
-.pill-amber { background:var(--amber-light);color:var(--amber); }
+  /* ── CALENDAR EVENTS ── */
+  .event-list { display:flex;flex-direction:column;gap:1px; }
+  .event-row { display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border); }
+  .event-row:last-child { border-bottom:none; }
+  .event-time { font-size:11px;font-weight:700;color:var(--violet);min-width:50px;flex-shrink:0;padding-top:2px; }
+  .event-body { flex:1;min-width:0; }
+  .event-title { font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .event-loc { font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .event-allday { font-size:11px;font-weight:600;color:var(--text3);background:var(--bg2);padding:2px 8px;border-radius:4px;align-self:center;flex-shrink:0; }
 
-/* TABS */
-.tab-bar { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px; }
-.etab { padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text2);transition:all 0.15s;display:inline-block; }
-.etab:hover { border-color:var(--on-surface,#e5e2e1);color:var(--on-surface,#e5e2e1); }
-.etab.active { background:var(--violet);color:#fff;border-color:var(--violet); }
+  /* 7-day event groups */
+  .day-group { margin-bottom:18px; }
+  .day-group:last-child { margin-bottom:0; }
+  .day-label { font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--violet);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border); }
+  .day-label.today-label { color:var(--teal); }
 
-/* BUTTONS */
-.btn-primary { display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:var(--violet);color:#fff;border:none;border-radius:999px;font-family:'Manrope', sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s; }
-.btn-primary:hover { opacity:0.85; }
-.btn-violet { display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--violet);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Manrope', sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s; }
-.btn-violet:hover { opacity:0.9; }
-.btn-ghost { display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:var(--card);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Manrope', sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s; }
-.btn-ghost:hover { border-color:var(--on-surface,#e5e2e1);color:var(--on-surface,#e5e2e1); }
-.btn-danger { display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--red-light);color:var(--red);border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Manrope', sans-serif;transition:opacity 0.15s; }
-.btn-danger:hover { opacity:0.8; }
-.btn-add { display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--bg2);color:var(--text2);border:1.5px dashed var(--border);border-radius:999px;font-family:'Manrope', sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;margin-top:12px; }
-.btn-add:hover { background:var(--violet-light);color:var(--violet);border-color:var(--violet);border-style:solid; }
-.btn-row-del { background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:2px 6px;border-radius:4px;opacity:0;transition:opacity 0.15s,color 0.15s;margin-left:8px; }
-tr:hover .btn-row-del,.list-row:hover .btn-row-del,.invest-row:hover .btn-row-del,.pot-row:hover .btn-row-del,.goal-row:hover .btn-row-del,.purchase-row:hover .btn-row-del { opacity:1; }
-.btn-row-del:hover { color:var(--red);background:var(--red-light); }
+  /* ── TASKS ── */
+  .task-list { display:flex;flex-direction:column;gap:1px; }
+  .task-row { display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border); }
+  .task-row:last-child { border-bottom:none; }
+  .task-dot { width:7px;height:7px;border-radius:50%;border:1.5px solid var(--text3);flex-shrink:0;margin-top:5px; }
+  .task-dot.overdue { border-color:var(--red);background:var(--red); }
+  .task-dot.today { border-color:var(--violet); }
+  .task-body { flex:1;min-width:0; }
+  .task-title { font-size:13px;color:var(--text);line-height:1.4; }
+  .task-meta { font-size:11px;color:var(--text3);margin-top:2px; }
+  .task-meta.overdue { color:var(--red);font-weight:600; }
+  .task-project { font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--bg2);color:var(--text3);margin-left:6px;vertical-align:middle; }
 
-/* PROGRESS BARS */
-.goal-bar-wrap { margin-top:6px; }
-.goal-bar-label { display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px; }
-.goal-bar-label span:first-child { color:var(--text2); }
-.goal-bar-label span:last-child { font-weight:600;color:var(--on-surface,#e5e2e1); }
-.goal-bar-track { height:7px;background:var(--bg2);border-radius:999px;overflow:hidden; }
-.goal-bar-fill { height:100%;border-radius:999px;background:var(--violet); }
+  /* priority dots */
+  .p5 { border-color:var(--red) !important; }
+  .p3 { border-color:var(--amber) !important; }
+  .p1 { border-color:var(--blue) !important; }
 
-/* FORMS */
-.form-label { display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em; }
-.form-input { width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Manrope', sans-serif;font-size:13px;background:var(--bg);color:var(--on-surface,#e5e2e1);outline:none;transition:border-color 0.15s; }
-.form-input:focus { border-color:var(--violet); }
-.form-select { width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Manrope', sans-serif;font-size:13px;background:var(--bg);color:var(--on-surface,#e5e2e1);outline:none;cursor:pointer; }
-.form-select:focus { border-color:var(--violet); }
-.form-row { display:grid;gap:12px;margin-bottom:14px; }
-.form-row-2 { grid-template-columns:1fr 1fr; }
-.form-row-3 { grid-template-columns:1fr 1fr 1fr; }
+  /* ── QUICK CAPTURE ── */
+  .quick-capture { display:flex;gap:10px;align-items:flex-end; }
+  .quick-capture textarea { flex:1;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'Manrope',sans-serif;font-size:13px;color:var(--text);outline:none;resize:none;min-height:60px;transition:border-color 0.15s; }
+  .quick-capture textarea:focus { border-color:var(--violet); }
+  .quick-capture button { padding:10px 18px;background:var(--violet);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s;white-space:nowrap; }
+  .quick-capture button:hover { opacity:0.85; }
 
-/* TABLES */
-.data-table { width:100%;border-collapse:collapse;font-size:13px; }
-.data-table th { font-family:'Manrope', sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border); }
-.data-table-center th, .data-table-center td { text-align:center; }
-.data-table td { padding:10px 12px;border-bottom:1px solid var(--border);color:var(--on-surface,#e5e2e1); }
-.data-table tr:last-child td { border-bottom:none; }
-.data-table tr:hover td { background:var(--bg2); }
-.td-mono { font-family:'Manrope', sans-serif;font-size:12px; }
-.td-muted { color:var(--text2); }
-.td-right { text-align:right; }
+  /* ── GRIDS ── */
+  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+  .grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
 
-/* SECTION HEADERS */
-.section-eyebrow { font-family:'Manrope', sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:4px;padding-left:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline; }
-.section-title { font-family:'Space Grotesk', sans-serif;font-size:22px;font-weight:500;margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline; }
+  /* ── BADGES & PILLS ── */
+  .badge { display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px; }
+  .badge-violet { background:var(--violet-light);color:var(--violet); }
+  .badge-teal { background:var(--teal-light);color:var(--teal); }
+  .badge-coral { background:var(--coral-light);color:var(--coral); }
+  .badge-amber { background:var(--amber-light);color:var(--amber); }
+  .badge-blue { background:var(--blue-light);color:var(--blue); }
+  .badge-green { background:var(--green-light);color:var(--green); }
+  .badge-red { background:var(--red-light);color:var(--red); }
+  .badge-muted { background:var(--bg2);color:var(--text3); }
 
-/* TIP BOX */
-.tip-box { background:var(--bg2);border-radius:var(--radius-sm);padding:16px 18px; }
-.tip-box-title { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-family:'Manrope', sans-serif;margin-bottom:10px; }
-.tip-item { font-size:13px;color:var(--on-surface,#e5e2e1);padding:4px 0;display:flex;gap:10px;align-items:flex-start; }
-.tip-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px;background:var(--violet); }
+  /* ── TABS ── */
+  .tab-bar { display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap; }
+  .etab { padding:6px 15px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text3);transition:all 0.14s; }
+  .etab:hover { color:var(--text);border-color:rgba(255,255,255,0.2); }
+  .etab.active { background:var(--violet);color:#fff;border-color:var(--violet); }
 
-/* TOAST */
-.toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0e0e0e;color:#e5e2e1;border:1px solid rgba(255,255,255,0.1);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:500;opacity:0;transition:opacity 0.3s;pointer-events:none; }
-.toast.show { opacity:1; }
+  /* ── BUTTONS ── */
+  .btn-primary { display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--violet);color:#fff;border:none;border-radius:999px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity 0.15s; }
+  .btn-primary:hover { opacity:0.85; }
+  .btn-ghost { display:inline-flex;align-items:center;gap:7px;padding:8px 15px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'Manrope',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.14s; }
+  .btn-ghost:hover { color:var(--text);border-color:rgba(255,255,255,0.22); }
+  .btn-add { display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--text3);border:1px dashed var(--border2);border-radius:999px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.14s; }
+  .btn-add:hover { color:var(--violet);border-color:var(--violet);border-style:solid;background:var(--violet-light); }
+  .btn-danger { display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--red-light);color:var(--red);border:none;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Manrope',sans-serif; }
+  .btn-row-del { background:none;border:none;color:transparent;font-size:13px;cursor:pointer;padding:2px 5px;border-radius:4px;transition:all 0.14s;margin-left:6px;line-height:1; }
+  tr:hover .btn-row-del, .goal-card:hover .btn-row-del, .bucket-item:hover .btn-row-del, .travel-item:hover .btn-row-del, .milestone-item:hover .btn-row-del { color:var(--text3); }
+  .btn-row-del:hover { color:var(--red) !important;background:var(--red-light); }
 
-/* MODAL */
-.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:none;align-items:center;justify-content:center;padding:20px; }
-.modal-overlay.open { display:flex; }
-.modal { background:var(--card);border-radius:var(--radius);padding:28px;max-width:520px;width:100%;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto; }
-.modal-title { font-family:'Space Grotesk', sans-serif;font-size:22px;font-weight:700;margin-bottom:20px; }
-.modal-footer { display:flex;gap:10px;justify-content:flex-end;margin-top:20px; }
+  /* ── FORMS ── */
+  .form-label { display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em; }
+  .form-input { width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'Manrope',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s; }
+  .form-input:focus { border-color:var(--violet); }
+  .form-select { width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'Manrope',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;cursor:pointer; }
+  .form-row { display:grid;gap:12px;margin-bottom:12px; }
+  .form-row-2 { grid-template-columns:1fr 1fr; }
+  .form-row-3 { grid-template-columns:1fr 1fr 1fr; }
+  textarea.form-input { resize:vertical;min-height:60px; }
 
-/* TEXTAREA */
-textarea { width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Manrope', sans-serif;font-size:13px;background:var(--bg);color:var(--on-surface,#e5e2e1);outline:none;resize:vertical;transition:border-color 0.15s; }
-textarea:focus { border-color:var(--violet); }
+  /* ── PROGRESS BARS ── */
+  .goal-bar-track { height:5px;background:var(--bg2);border-radius:999px;overflow:hidden;margin-top:8px; }
+  .goal-bar-fill { height:100%;border-radius:999px;background:var(--violet);transition:width 0.3s; }
 
-/* SPECIFIC STYLES FOR LIFE HUB */
-.greeting { font-size:24px;font-weight:500;margin-bottom:8px; }
-.date-large { font-family:'Space Grotesk', sans-serif;font-size:48px;font-weight:700;color:var(--violet);line-height:1; }
+  /* ── SECTION TITLE ── */
+  .section-title { font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;margin:24px 0 14px;display:flex;justify-content:space-between;align-items:baseline; }
+  .section-title:first-child { margin-top:0; }
 
-.note-item { padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s; }
-.note-item:hover { background:var(--bg2);padding:12px 8px;margin:0 -8px;border-radius:6px; }
-.note-item-title { font-weight:500;color:var(--on-surface,#e5e2e1); }
-.note-item-date { font-size:11px;color:var(--text3);margin-top:2px; }
-.note-item-preview { font-size:12px;color:var(--text2);margin-top:3px;opacity:0.7; }
+  /* ── NOTION FOLDER CARDS ── */
+  .folder-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:24px; }
+  .notion-folder-card { display:flex;flex-direction:column;gap:3px;padding:16px 18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--text);transition:all 0.16s; }
+  .notion-folder-card:hover { background:var(--card-high);border-color:var(--violet-mid);transform:translateY(-1px);box-shadow:0 4px 20px rgba(167,139,250,0.12); }
+  .notion-folder-icon { font-size:22px;margin-bottom:4px; }
+  .notion-folder-name { font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600; }
+  .notion-folder-desc { font-size:11px;color:var(--text3); }
 
-.two-column { display:grid;grid-template-columns:1fr 2fr;gap:24px; }
-.sidebar-section { height:600px;overflow-y:auto; }
+  /* ── LINK CARDS ── */
+  .link-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px; }
+  .link-card { background:var(--card);border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer;transition:all 0.15s;border:1px solid var(--border); }
+  .link-card:hover { background:var(--card-high);border-color:var(--violet-mid);box-shadow:0 0 24px rgba(167,139,250,0.1); }
+  .link-emoji { font-size:32px;margin-bottom:8px; }
+  .link-name { font-weight:600;font-size:13px;margin-bottom:3px; }
+  .link-desc { font-size:11px;color:var(--text3); }
 
-.goal-grid { display:grid;grid-template-columns:1fr;gap:12px; }
-.goal-card { background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border); }
+  /* ── GOAL CARDS ── */
+  .goal-card { background:var(--bg2);border-radius:var(--radius-sm);padding:14px 16px;border:1px solid var(--border);margin-bottom:8px; }
+  .goal-cat-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin:18px 0 10px; }
+  .goal-cat-label:first-child { margin-top:0; }
 
-.month-grid { display:grid;grid-template-columns:repeat(12,1fr);gap:6px;margin-top:16px; }
-.month-box { aspect-ratio:1;background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s; }
-.month-box:hover { border-color:var(--violet);background:var(--violet-light); }
+  /* ── BUCKET / TRAVEL / MILESTONE ── */
+  .list-row { display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border); }
+  .list-row:last-child { border-bottom:none; }
+  .list-row-title { font-size:13px;color:var(--text); }
+  .status-pill { font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px; }
+  .status-dream { background:var(--blue-light);color:var(--blue); }
+  .status-planned { background:var(--amber-light);color:var(--amber); }
+  .status-done { background:var(--teal-light);color:var(--teal); }
 
-.link-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px; }
-.link-card { background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all 0.15s;border:1px solid rgba(255,255,255,0.08); }
-.link-card:hover { background:var(--card-high);box-shadow:0 0 30px var(--violet-light);border-color:var(--violet); }
-.link-emoji { font-size:40px;margin-bottom:10px; }
-.link-name { font-weight:600;margin-bottom:4px; }
-.link-desc { font-size:11px;color:var(--text2); }
+  /* ── MONTH GRID ── */
+  .month-grid { display:grid;grid-template-columns:repeat(12,1fr);gap:6px;margin-top:12px; }
+  .month-box { aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.14s;color:var(--text3); }
+  .month-box:hover { border-color:var(--violet);background:var(--violet-light);color:var(--violet); }
+  .month-box.current { border-color:var(--violet);color:var(--violet);background:var(--violet-light); }
+  .month-box.has-note { border-color:var(--teal);color:var(--teal); }
 
-.task-item { display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);justify-content:space-between; }
-.task-item:last-child { border-bottom:none; }
-.task-checkbox { width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;background:transparent; }
-.task-info { flex:1; }
-.task-title { font-size:13px;font-weight:500; }
-.task-priority { font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px; }
-.priority-high { background:var(--red-light);color:var(--red); }
-.priority-medium { background:var(--amber-light);color:var(--amber); }
-.priority-low { background:var(--violet-light);color:var(--violet); }
+  /* ── TASKS PAGE HUB ── */
+  .hub-task-row { display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border); }
+  .hub-task-row:last-child { border-bottom:none; }
+  .hub-checkbox { width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;cursor:pointer;flex-shrink:0;accent-color:var(--violet); }
+  .hub-task-title { flex:1;font-size:13px;color:var(--text); }
+  .hub-task-title.done { text-decoration:line-through;opacity:0.45; }
+  .hub-task-due { font-size:10px;color:var(--text3); }
+  .priority-badge { font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px; }
+  .priority-high { background:var(--red-light);color:var(--red); }
+  .priority-medium { background:var(--amber-light);color:var(--amber); }
+  .priority-low { background:var(--violet-light);color:var(--violet); }
 
-.bucket-item { padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
-.bucket-status { font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px; }
-.status-dream { background:var(--blue-light);color:var(--blue); }
-.status-planned { background:var(--amber-light);color:var(--amber); }
-.status-done { background:var(--teal-light);color:var(--teal); }
+  /* ── TOAST ── */
+  .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:var(--text);border:1px solid var(--border2);padding:9px 20px;border-radius:999px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:600;opacity:0;transition:opacity 0.25s;pointer-events:none; }
+  .toast.show { opacity:1; }
 
-.event-placeholder { background:var(--bg2);border-left:3px solid var(--violet);padding:10px 12px;margin:8px 0;border-radius:4px;font-size:12px; }
+  /* ── MODAL ── */
+  .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:400;display:none;align-items:center;justify-content:center;padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--card);border-radius:var(--radius);padding:26px;max-width:500px;width:100%;border:1px solid var(--border2);max-height:90vh;overflow-y:auto; }
+  .modal-title { font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-bottom:18px; }
+  .modal-footer { display:flex;gap:10px;justify-content:flex-end;margin-top:18px; }
 
-.travel-item { padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
-.milestone-item { padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
+  /* ── LOADING / EMPTY ── */
+  .loading { display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3);padding:12px 0; }
+  .spinner { width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--violet);border-radius:50%;animation:spin 0.75s linear infinite;flex-shrink:0; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .empty-state { font-size:13px;color:var(--text3);padding:14px 0;text-align:center; }
+  .error-msg { font-size:12px;color:var(--coral);padding:10px 14px;background:var(--coral-light);border-radius:var(--radius-sm);margin:4px 0; }
 
-.iframe-fallback { background:var(--bg2);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;color:var(--text2);font-size:13px; }
-
-@media (max-width:900px) {
-  .sidebar { transform:translateX(-240px);transition:transform 0.25s; }
-  .sidebar.open { transform:translateX(0); }
-  .sidebar-overlay.open { display:block; }
-  .main { margin-left:0;padding:60px 16px; }
-  .hamburger { display:block; }
-  .grid-3,.grid-4 { grid-template-columns:1fr 1fr; }
-  .two-column { grid-template-columns:1fr; }
-  .link-grid { grid-template-columns:repeat(2,1fr); }
-}
-@media (max-width:600px) {
-  .main { padding:60px 14px; }
-  .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
-  .page-title { font-size:26px; }
-  .form-row-2,.form-row-3 { grid-template-columns:1fr; }
-  .link-grid { grid-template-columns:1fr; }
-  .month-grid { grid-template-columns:repeat(6,1fr); }
-  .date-large { font-size:36px; }
-}
-
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--border);border-radius:99px; }
+  /* ── RESPONSIVE ── */
+  @media (max-width:900px) {
+    .sidebar { transform:translateX(-240px);transition:transform 0.22s; }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-overlay.open { display:block; }
+    .main { margin-left:0;padding:58px 16px 60px; }
+    .hamburger { display:block; }
+    .stats-row { grid-template-columns:1fr 1fr; }
+    .today-cols { grid-template-columns:1fr; }
+    .grid-3,.grid-4 { grid-template-columns:1fr 1fr; }
+    .link-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:600px) {
+    .main { padding:58px 12px 60px; }
+    .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+    .stats-row { grid-template-columns:1fr 1fr; }
+    .page-title { font-size:26px; }
+    .form-row-2,.form-row-3 { grid-template-columns:1fr; }
+    .link-grid { grid-template-columns:1fr; }
+    .month-grid { grid-template-columns:repeat(6,1fr); }
+    .today-cols { grid-template-columns:1fr; }
+    #sync-indicator { display:none !important; }
+  }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:99px; }
 </style>
 </head>
 <body>
 
-<!-- SYNC OVERLAY -->
-<div id="sync-overlay">
-  <div class="sync-card">
-    <div class="sync-logo">Life Hub</div>
-    <div class="sync-sub">Connect to Google Drive to sync your data</div>
-    <button class="sync-btn" onclick="signIn()">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+<!-- SIGN-IN OVERLAY -->
+<div id="signin-overlay">
+  <div class="signin-card">
+    <div class="signin-logo">Life Hub</div>
+    <div class="signin-sub">Sign in to load your calendar, tasks &amp; data</div>
+    <button class="signin-btn" onclick="signIn()">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in with Google
     </button>
-    <div class="sync-setup">
-      <div class="sync-setup-title">How it works</div>
-      <div class="sync-step">
-        <span class="sync-step-num">1</span>
-        <span>Sign in with your Google account</span>
-      </div>
-      <div class="sync-step">
-        <span class="sync-step-num">2</span>
-        <span>Data is saved to a file in your Google Drive</span>
-      </div>
-      <div class="sync-step">
-        <span class="sync-step-num">3</span>
-        <span>Access your Life Hub from any device</span>
-      </div>
-    </div>
+    <div class="signin-note">Your data syncs to Google Drive.<br>Calendar &amp; tasks load from your Google account.</div>
   </div>
 </div>
 
 <!-- SYNC INDICATOR -->
-<div id="sync-indicator" style="display:none;">
+<div id="sync-indicator">
   <div id="sync-dot"></div>
   <span id="sync-label">Synced</span>
 </div>
@@ -326,261 +320,267 @@ textarea:focus { border-color:var(--violet); }
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-logo">Life Hub</div>
-  <div class="sidebar-sub">Your personal dashboard</div>
+  <div class="sidebar-user" id="sidebar-user">Loading…</div>
 
-  <div class="nav-label">Navigation</div>
+  <div class="nav-section">Main</div>
   <div class="nav-item active" onclick="switchPage('today')"><span class="nav-icon">🏠</span> Today</div>
   <div class="nav-item" onclick="switchPage('calendar')"><span class="nav-icon">📅</span> Calendar</div>
   <div class="nav-item" onclick="switchPage('tasks')"><span class="nav-icon">✅</span> Tasks</div>
   <div class="nav-item" onclick="switchPage('notes')"><span class="nav-icon">📝</span> Notes</div>
+
+  <div class="nav-section">Life</div>
   <div class="nav-item" onclick="switchPage('goals')"><span class="nav-icon">🎯</span> Goals</div>
   <div class="nav-item" onclick="switchPage('links')"><span class="nav-icon">🔗</span> Links</div>
+
+  <div class="nav-section">System</div>
   <div class="nav-item" onclick="switchPage('settings')"><span class="nav-icon">⚙️</span> Settings</div>
 
   <div class="sidebar-footer">
-    <button class="btn-export" onclick="exportData()">Export Data</button>
+    <button class="btn-signout" onclick="signOut()">Sign out</button>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- TODAY PAGE -->
+<!-- ══ TODAY PAGE ══ -->
 <div id="page-today" class="page active">
-  <div class="page-eyebrow">Welcome Back</div>
-  <div class="greeting" id="greeting">Good morning, Laura</div>
-  <div class="date-large" id="todayDate">Loading...</div>
-  <div class="page-sub">Your day at a glance</div>
+  <div class="page-eyebrow">Welcome back</div>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;" id="greeting">Good morning, Laura</div>
+      <div style="font-size:14px;color:var(--text3);margin-top:4px;" id="todayDate"></div>
+    </div>
+    <button class="btn-ghost" onclick="refreshToday()" style="flex-shrink:0;">↻ Refresh</button>
+  </div>
 
-  <div class="grid-4" style="margin-bottom:24px;">
+  <!-- STAT CARDS -->
+  <div class="stats-row" style="margin-top:20px;">
     <div class="stat-card">
-      <div class="stat-eyebrow">Tasks Due Today</div>
-      <div class="stat-val" id="tasksDueCount">0</div>
+      <div class="stat-eyebrow">Tasks Today</div>
+      <div class="stat-val" id="stat-tasks">–</div>
+      <div class="stat-sub" id="stat-tasks-sub">loading…</div>
     </div>
     <div class="stat-card">
       <div class="stat-eyebrow">Events Today</div>
-      <div class="stat-val" id="eventsCount">0</div>
+      <div class="stat-val" id="stat-events">–</div>
+      <div class="stat-sub" id="stat-events-sub">loading…</div>
     </div>
     <div class="stat-card">
       <div class="stat-eyebrow">Active Goals</div>
-      <div class="stat-val" id="activeGoalsCount">0</div>
+      <div class="stat-val" id="stat-goals">–</div>
+      <div class="stat-sub">in progress</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-eyebrow" id="jobCountdownLabel">Days to New Job</div>
-      <div class="stat-val" id="daysToJob">–</div>
-      <div class="stat-sub" id="jobCountdownSub">June 15, 2026</div>
-    </div>
-  </div>
-
-  <div class="section-title">Today's Schedule</div>
-  <div class="card" style="margin-bottom:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div style="font-size:13px;color:var(--text2);">Your Google Calendar events for today</div>
-      <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')" style="font-size:12px;padding:6px 12px;">Open Calendar ↗</button>
-    </div>
-    <div id="scheduleContainer">
-      <div style="color:var(--text3);font-size:13px;padding:12px 0;">Sign in with Google to load your calendar events.</div>
+    <div class="stat-card accent-violet" id="countdown-card">
+      <div class="stat-eyebrow" id="countdown-label">Days to New Job</div>
+      <div class="stat-val" id="countdown-val">–</div>
+      <div class="stat-sub" id="countdown-sub">June 15, 2026</div>
     </div>
   </div>
 
-  <div class="section-title">Today's Hub Tasks</div>
-  <div class="card" style="margin-bottom:24px;">
-    <button class="btn-primary" onclick="window.open('https://ticktick.com','_blank')" style="margin-bottom:16px;">Open TickTick</button>
-    <div id="todayTasksList" style="max-height:300px;overflow-y:auto;">
-      <div style="color:var(--text2);font-size:13px;">No tasks for today</div>
-    </div>
-  </div>
-
-  <div class="section-title">Quick Capture</div>
-  <div class="card">
-    <div class="form-row" style="margin-bottom:0;">
-      <div>
-        <label class="form-label">Quick Note</label>
-        <textarea id="quickCaptureInput" placeholder="Write something..." style="min-height:80px;"></textarea>
+  <!-- TODAY CALENDAR + TASKS -->
+  <div class="today-cols">
+    <!-- Today's Events -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">📅 Today's Schedule</div>
+        <a href="https://calendar.google.com" target="_blank" style="font-size:11px;color:var(--text3);text-decoration:none;font-weight:500;">Open ↗</a>
       </div>
+      <div id="today-events-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
     </div>
-    <button class="btn-primary" onclick="saveQuickCapture()" style="margin-top:12px;">Save Note</button>
+
+    <!-- Today's Tasks (from TickTick via Drive cache) -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left">✅ Due Today</div>
+        <a href="https://ticktick.com" target="_blank" style="font-size:11px;color:var(--text3);text-decoration:none;font-weight:500;">TickTick ↗</a>
+      </div>
+      <div id="today-tasks-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- QUICK CAPTURE -->
+  <div class="card">
+    <div class="card-title">✏️ Quick Capture</div>
+    <div class="quick-capture">
+      <textarea id="quickCaptureInput" placeholder="Capture a thought, note or task…" rows="2"></textarea>
+      <button onclick="saveQuickCapture()">Save</button>
+    </div>
   </div>
 </div>
 
-<!-- CALENDAR PAGE -->
+<!-- ══ CALENDAR PAGE ══ -->
 <div id="page-calendar" class="page">
   <div class="page-eyebrow">Your Schedule</div>
   <div class="page-title">Calendar</div>
-  <div class="page-sub">Your events for the week ahead</div>
-
-  <!-- Next 7 days events from API -->
-  <div class="section-title" style="margin-bottom:14px;">Next 7 Days</div>
-  <div class="card" style="margin-bottom:24px;">
-    <div id="upcomingEvents">
-      <div style="color:var(--text3);font-size:13px;padding:8px 0;">Sign in with Google to load upcoming events.</div>
-    </div>
+  <div class="page-sub" style="display:flex;align-items:center;justify-content:space-between;">
+    <span>Next 7 days</span>
+    <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')">Open Google Calendar ↗</button>
   </div>
 
-  <!-- Embedded calendar - scrolled to current time via JS -->
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <div class="section-title" style="margin-bottom:0;">Full Calendar</div>
-    <button class="btn-ghost" onclick="window.open('https://calendar.google.com','_blank')" style="font-size:12px;padding:6px 14px;">Open in Google ↗</button>
+  <div class="card" style="margin-bottom:16px;">
+    <div id="week-events-list"><div class="loading"><div class="spinner"></div>Loading calendar…</div></div>
   </div>
+
   <div class="card" style="padding:0;overflow:hidden;">
-    <iframe id="calendarIframe" src="https://calendar.google.com/calendar/embed?src=lauraspires5%40gmail.com&ctz=Europe%2FLondon&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0" style="border:0;width:100%;height:620px;display:block;"></iframe>
+    <iframe src="https://calendar.google.com/calendar/embed?src=lauraspires5%40gmail.com&ctz=Europe%2FLondon&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&color=%23a78bfa" style="border:0;width:100%;height:580px;display:block;"></iframe>
   </div>
 </div>
 
-<!-- TASKS PAGE -->
+<!-- ══ TASKS PAGE ══ -->
 <div id="page-tasks" class="page">
-  <div class="page-eyebrow">Stay Organized</div>
+  <div class="page-eyebrow">Stay Organised</div>
   <div class="page-title">Tasks</div>
-  <div class="page-sub">Manage your to-do list</div>
+  <div class="page-sub">Live from TickTick + your Hub tasks</div>
 
-  <div class="card" style="margin-bottom:24px;">
-    <button class="btn-primary" onclick="window.open('https://ticktick.com','_blank')" style="width:100%;padding:14px;font-size:15px;">Open TickTick</button>
+  <div class="tab-bar">
+    <button class="etab active" onclick="switchTaskTab(this,'ticktick')">TickTick</button>
+    <button class="etab" onclick="switchTaskTab(this,'hub')">Hub Tasks</button>
   </div>
 
-  <div class="section-title">Hub Tasks</div>
-  <div class="card" style="margin-bottom:24px;">
-    <div class="form-row-2" style="margin-bottom:14px;">
-      <div>
-        <label class="form-label">Task Title</label>
-        <input type="text" class="form-input" id="newTaskTitle" placeholder="Add a new task...">
+  <!-- TickTick tab -->
+  <div id="tasks-ticktick">
+    <div class="grid-2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-title">Today &amp; Overdue</div>
+        <div id="tt-today"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
-      <div>
-        <label class="form-label">Priority</label>
-        <select class="form-select" id="newTaskPriority">
-          <option value="low">Low</option>
-          <option value="medium" selected>Medium</option>
-          <option value="high">High</option>
-        </select>
+      <div class="card">
+        <div class="card-title">Next 7 Days</div>
+        <div id="tt-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
     </div>
-    <div class="form-row-2" style="margin-bottom:14px;">
-      <div>
-        <label class="form-label">Due Date</label>
-        <input type="date" class="form-input" id="newTaskDueDate">
-      </div>
-      <div style="display:flex;align-items:flex-end;gap:8px;">
-        <button class="btn-primary" onclick="addHubTask()" style="flex:1;">Add Task</button>
-      </div>
+    <div style="text-align:center;padding:4px 0;">
+      <a href="https://ticktick.com" target="_blank" class="btn-primary" style="text-decoration:none;">Open TickTick ↗</a>
     </div>
   </div>
 
-  <div class="card">
-    <div id="hubTasksList">
-      <div style="color:var(--text2);font-size:13px;padding:12px 0;">No tasks yet</div>
+  <!-- Hub tasks tab -->
+  <div id="tasks-hub" style="display:none;">
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">Add Task</div>
+      <div class="form-row form-row-2" style="margin-bottom:10px;">
+        <div>
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" id="newTaskTitle" placeholder="What needs doing?">
+        </div>
+        <div>
+          <label class="form-label">Priority</label>
+          <select class="form-select" id="newTaskPriority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div>
+          <label class="form-label">Due Date</label>
+          <input type="date" class="form-input" id="newTaskDueDate">
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn-primary" onclick="addHubTask()" style="width:100%;">Add Task</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div id="hubTasksList"><div class="empty-state">No hub tasks yet</div></div>
     </div>
   </div>
 </div>
 
-<!-- NOTES PAGE -->
+<!-- ══ NOTES PAGE ══ -->
 <div id="page-notes" class="page">
   <div class="page-eyebrow">Remember Everything</div>
   <div class="page-title">Notes</div>
-  <div class="page-sub">Your notes live in Notion — organised by folder, accessible anywhere.</div>
+  <div class="page-sub">Your notes live in Notion — organised by folder.</div>
 
-  <!-- Open Notion button -->
-  <div style="margin-bottom:28px;">
+  <div style="margin-bottom:24px;">
     <a href="https://www.notion.so/3578ca7c10538109a866ee4b18437367" target="_blank"
-       style="display:inline-flex;align-items:center;gap:10px;padding:13px 22px;background:var(--violet);color:#fff;border-radius:999px;font-family:'Manrope',sans-serif;font-size:14px;font-weight:600;text-decoration:none;transition:opacity 0.15s;"
-       onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-      <span style="font-size:18px;">📋</span> Open My Notes in Notion
+       class="btn-primary" style="text-decoration:none;font-size:14px;padding:12px 24px;">
+      📋 Open All Notes in Notion
     </a>
   </div>
 
-  <!-- Folder grid -->
-  <div class="section-title" style="margin-bottom:16px;">Jump to a folder</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px;">
-
+  <div class="section-title" style="margin-top:0;">Jump to a folder</div>
+  <div class="folder-grid">
     <a href="https://www.notion.so/3578ca7c105381589354e33d00674412" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">💼</div>
       <div class="notion-folder-name">Work</div>
       <div class="notion-folder-desc">Meetings, projects, new job prep</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c105381aabb3fdfb5b205c335" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🏃</div>
       <div class="notion-folder-name">Fitness</div>
       <div class="notion-folder-desc">Workout logs, plans, milestones</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c10538191b669d31594c41a0e" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">💰</div>
       <div class="notion-folder-name">Finance</div>
       <div class="notion-folder-desc">Budget notes, financial goals</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c105381deae48dd0bee65f8b3" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🏥</div>
       <div class="notion-folder-name">Health</div>
       <div class="notion-folder-desc">Appointments, health log, wellness</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c1053814db70ff986599454a0" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🎯</div>
       <div class="notion-folder-name">Interests</div>
       <div class="notion-folder-desc">Hobbies, TV, music</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c10538196a3c1d08a8fd29aed" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">📚</div>
       <div class="notion-folder-name">Learning</div>
       <div class="notion-folder-desc">Books, courses, articles</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c10538163acdcf8639bbe1ce9" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🌿</div>
       <div class="notion-folder-name">Lifestyle</div>
       <div class="notion-folder-desc">Home, routines, food, shopping</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c105381548e34c103fa310540" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🧍</div>
       <div class="notion-folder-name">Personal</div>
       <div class="notion-folder-desc">Reflections, goals, life admin</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c10538150a50dd61ad1c704bd" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">✈️</div>
       <div class="notion-folder-name">Travel</div>
       <div class="notion-folder-desc">Trip plans, packing lists</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c105381b28f60e26c12182b47" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">🤝</div>
       <div class="notion-folder-name">Volunteering</div>
       <div class="notion-folder-desc">Session notes, reflections</div>
     </a>
-
     <a href="https://www.notion.so/3578ca7c105381a5b2cbdb03a3e5cc22" target="_blank" class="notion-folder-card">
       <div class="notion-folder-icon">📝</div>
       <div class="notion-folder-name">General Notes</div>
       <div class="notion-folder-desc">Quick captures, inbox</div>
     </a>
-
   </div>
 
-  <!-- Templates reminder -->
-  <div class="card" style="border-left:3px solid var(--violet);padding:18px 22px;">
-    <div class="card-title" style="font-size:14px;margin-bottom:8px;">📋 Templates available in Notion</div>
-    <div style="font-size:13px;color:var(--text2);display:flex;flex-direction:column;gap:6px;">
-      <div>📋 <strong>Work</strong> — Meeting Note Template (copy for each meeting)</div>
-      <div>🏃 <strong>Fitness</strong> — Workout Log Template (copy for each session)</div>
-      <div>✈️ <strong>Travel</strong> — Trip Plan Template + Standard Packing List</div>
-      <div>🤝 <strong>Volunteering</strong> — Session Note Template (copy each Saturday)</div>
+  <!-- Quick captures stored in Drive -->
+  <div class="section-title">Quick Captures</div>
+  <div class="card">
+    <div id="quick-captures-list">
+      <div class="empty-state">No quick captures yet — use the Today page to add one.</div>
     </div>
   </div>
 </div>
 
-<!-- GOALS PAGE -->
+<!-- ══ GOALS PAGE ══ -->
 <div id="page-goals" class="page">
   <div class="page-eyebrow">Living Intentionally</div>
-  <div class="page-title">Goals & Dreams</div>
-  <div class="page-sub">Track what matters to you</div>
+  <div class="page-title">Goals &amp; Dreams</div>
+  <div class="page-sub">Track what matters most</div>
 
-  <div class="section-title">Add New Goal</div>
-  <div class="card" style="margin-bottom:24px;">
-    <div class="form-row-2" style="margin-bottom:14px;">
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title">Add New Goal</div>
+    <div class="form-row form-row-2" style="margin-bottom:10px;">
       <div>
-        <label class="form-label">Goal Title</label>
+        <label class="form-label">Title</label>
         <input type="text" class="form-input" id="newGoalTitle" placeholder="What do you want to achieve?">
       </div>
       <div>
@@ -595,395 +595,457 @@ textarea:focus { border-color:var(--violet); }
         </select>
       </div>
     </div>
-    <div class="form-row-2" style="margin-bottom:14px;">
+    <div class="form-row form-row-2">
       <div>
         <label class="form-label">Target Date</label>
         <input type="date" class="form-input" id="newGoalDate">
       </div>
       <div>
-        <label class="form-label">Progress</label>
-        <input type="range" min="0" max="100" value="0" style="width:100%;height:8px;cursor:pointer;">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-input" id="newGoalDesc" placeholder="Why does this matter?">
       </div>
     </div>
-    <div>
-      <label class="form-label">Description</label>
-      <textarea class="form-input" id="newGoalDesc" placeholder="Why is this goal important?" style="min-height:60px;padding:10px 12px;border:1.5px solid var(--border);"></textarea>
-    </div>
-    <button class="btn-primary" onclick="addGoal()" style="margin-top:12px;">Add Goal</button>
+    <button class="btn-primary" onclick="addGoal()" style="margin-top:4px;">Add Goal</button>
   </div>
 
   <div class="section-title">My Goals</div>
-  <div id="goalsList">
-    <div style="color:var(--text2);font-size:13px;">No goals yet. Create one to get started!</div>
-  </div>
+  <div id="goalsList"><div class="empty-state">No goals yet — create one above.</div></div>
 
-  <div class="section-title" style="margin-top:28px;">Future Planning</div>
-
-  <div style="margin-bottom:24px;">
-    <div style="margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 class="card-title">Bucket List</h3>
-        <button class="btn-add" onclick="addBucketItem()" style="margin:0;">+ Add</button>
-      </div>
-      <div class="card">
-        <div id="bucketList">
-          <div style="color:var(--text2);font-size:13px;">No bucket list items yet</div>
-        </div>
-      </div>
+  <div class="section-title">Future Planning</div>
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Bucket List <button class="btn-add" onclick="addBucketItem()" style="margin:0;font-size:11px;padding:4px 10px;">+ Add</button></div>
+      <div id="bucketList"><div class="empty-state">Nothing yet</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Travel Wishlist <button class="btn-add" onclick="showTravelModal()" style="margin:0;font-size:11px;padding:4px 10px;">+ Add</button></div>
+      <div id="travelList"><div class="empty-state">Nothing yet</div></div>
     </div>
   </div>
 
-  <div style="margin-bottom:24px;">
-    <div style="margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 class="card-title">Travel Wishlist</h3>
-        <button class="btn-add" onclick="addTravelItem()" style="margin:0;">+ Add</button>
-      </div>
-      <div class="card">
-        <div class="form-row-2" style="margin-bottom:14px;">
-          <input type="text" class="form-input" id="travelPlace" placeholder="Place name...">
-          <input type="text" class="form-input" id="travelCountry" placeholder="Country...">
-        </div>
-        <div class="form-row" style="margin-bottom:14px;">
-          <select class="form-select" id="travelPriority">
-            <option value="dream">Dream</option>
-            <option value="planned">Planned</option>
-            <option value="done">Done</option>
-          </select>
-        </div>
-        <button class="btn-primary" onclick="saveTravelItem()">Save</button>
-        <div id="travelList" style="margin-top:16px;">
-        </div>
-      </div>
-    </div>
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Life Milestones <button class="btn-add" onclick="showMilestoneModal()" style="margin:0;font-size:11px;padding:4px 10px;">+ Add</button></div>
+    <div id="milestoneList"><div class="empty-state">Nothing yet</div></div>
   </div>
 
-  <div style="margin-bottom:24px;">
-    <div style="margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 class="card-title">Life Milestones</h3>
-        <button class="btn-add" onclick="addMilestone()" style="margin:0;">+ Add</button>
-      </div>
-      <div class="card">
-        <div class="form-row-2" style="margin-bottom:14px;">
-          <input type="text" class="form-input" id="milestoneTitle" placeholder="Milestone...">
-          <input type="number" class="form-input" id="milestoneYear" placeholder="Target year..." min="2026" max="2100">
-        </div>
-        <div class="form-row" style="margin-bottom:14px;">
-          <select class="form-select" id="milestoneStatus">
-            <option value="dream">Dream</option>
-            <option value="planned">Planned</option>
-            <option value="done">Done</option>
-          </select>
-        </div>
-        <button class="btn-primary" onclick="saveMilestone()">Save</button>
-        <div id="milestoneList" style="margin-top:16px;">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">Year at a Glance (2026)</div>
   <div class="card">
-    <div class="month-grid" id="monthGrid">
-    </div>
+    <div class="card-title">2026 at a Glance</div>
+    <div class="month-grid" id="monthGrid"></div>
   </div>
 </div>
 
-<!-- LINKS PAGE -->
+<!-- ══ LINKS PAGE ══ -->
 <div id="page-links" class="page">
   <div class="page-eyebrow">Quick Access</div>
   <div class="page-title">Links</div>
-  <div class="page-sub">Your favorite hubs and tools</div>
+  <div class="page-sub">Your tools and hubs</div>
 
-  <div class="section-title">My Hubs</div>
-  <div class="link-grid" style="margin-bottom:28px;">
+  <div class="section-title" style="margin-top:0;">My Hubs</div>
+  <div class="link-grid">
     <div class="link-card" onclick="window.open('https://ellespy.github.io/health-hub/','_blank')">
-      <div class="link-emoji">💪</div>
-      <div class="link-name">Health Hub</div>
-      <div class="link-desc">Fitness & wellness</div>
+      <div class="link-emoji">💪</div><div class="link-name">Health Hub</div><div class="link-desc">Fitness &amp; wellness</div>
     </div>
     <div class="link-card" onclick="window.open('https://ellespy.github.io/finance-hub/','_blank')">
-      <div class="link-emoji">💰</div>
-      <div class="link-name">Finance Hub</div>
-      <div class="link-desc">Money & investments</div>
+      <div class="link-emoji">💰</div><div class="link-name">Finance Hub</div><div class="link-desc">Money &amp; investments</div>
     </div>
-    <div class="link-card" onclick="alert('You are here!')">
-      <div class="link-emoji">🌿</div>
-      <div class="link-name">Life Hub</div>
-      <div class="link-desc">Your dashboard</div>
+    <div class="link-card" onclick="showToast('You are here!')">
+      <div class="link-emoji">🌿</div><div class="link-name">Life Hub</div><div class="link-desc">Your dashboard</div>
     </div>
   </div>
 
   <div class="section-title">Productivity</div>
-  <div class="link-grid" style="margin-bottom:28px;">
+  <div class="link-grid">
     <div class="link-card" onclick="window.open('https://ticktick.com','_blank')">
-      <div class="link-emoji">✅</div>
-      <div class="link-name">TickTick</div>
-      <div class="link-desc">Task management</div>
+      <div class="link-emoji">✅</div><div class="link-name">TickTick</div><div class="link-desc">Task management</div>
     </div>
     <div class="link-card" onclick="window.open('https://calendar.google.com','_blank')">
-      <div class="link-emoji">📅</div>
-      <div class="link-name">Google Calendar</div>
-      <div class="link-desc">Schedule & events</div>
+      <div class="link-emoji">📅</div><div class="link-name">Google Calendar</div><div class="link-desc">Schedule &amp; events</div>
     </div>
     <div class="link-card" onclick="window.open('https://mail.google.com','_blank')">
-      <div class="link-emoji">📧</div>
-      <div class="link-name">Gmail</div>
-      <div class="link-desc">Email inbox</div>
+      <div class="link-emoji">📧</div><div class="link-name">Gmail</div><div class="link-desc">Email inbox</div>
     </div>
     <div class="link-card" onclick="window.open('https://drive.google.com','_blank')">
-      <div class="link-emoji">📁</div>
-      <div class="link-name">Google Drive</div>
-      <div class="link-desc">Files & documents</div>
+      <div class="link-emoji">📁</div><div class="link-name">Google Drive</div><div class="link-desc">Files &amp; documents</div>
     </div>
-  </div>
-
-  <div class="section-title">Entertainment</div>
-  <div class="link-grid" style="margin-bottom:28px;">
-    <div class="link-card" onclick="window.open('https://tvtime.com','_blank')">
-      <div class="link-emoji">📺</div>
-      <div class="link-name">TV Time</div>
-      <div class="link-desc">Track shows</div>
-    </div>
-    <div class="link-card" onclick="window.open('https://open.spotify.com','_blank')">
-      <div class="link-emoji">🎵</div>
-      <div class="link-name">Spotify</div>
-      <div class="link-desc">Music streaming</div>
+    <div class="link-card" onclick="window.open('https://www.notion.so/3578ca7c10538109a866ee4b18437367','_blank')">
+      <div class="link-emoji">📋</div><div class="link-name">Notion</div><div class="link-desc">Notes &amp; knowledge</div>
     </div>
   </div>
 
   <div class="section-title">Fitness</div>
   <div class="link-grid">
     <div class="link-card" onclick="window.open('https://runna.com','_blank')">
-      <div class="link-emoji">🏃</div>
-      <div class="link-name">Runna</div>
-      <div class="link-desc">Running training</div>
+      <div class="link-emoji">🏃</div><div class="link-name">Runna</div><div class="link-desc">Running training</div>
+    </div>
+  </div>
+
+  <div class="section-title">Entertainment</div>
+  <div class="link-grid">
+    <div class="link-card" onclick="window.open('https://tvtime.com','_blank')">
+      <div class="link-emoji">📺</div><div class="link-name">TV Time</div><div class="link-desc">Track shows</div>
+    </div>
+    <div class="link-card" onclick="window.open('https://open.spotify.com','_blank')">
+      <div class="link-emoji">🎵</div><div class="link-name">Spotify</div><div class="link-desc">Music</div>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS PAGE -->
+<!-- ══ SETTINGS PAGE ══ -->
 <div id="page-settings" class="page">
   <div class="page-eyebrow">Configuration</div>
   <div class="page-title">Settings</div>
   <div class="page-sub">Manage your Life Hub</div>
 
-  <div class="section-title">Google Drive Sync</div>
-  <div class="card" style="margin-bottom:24px;">
+  <div class="section-title" style="margin-top:0;">Google Account</div>
+  <div class="card" style="margin-bottom:16px;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div style="font-weight:500;margin-bottom:4px;" id="syncStatusLabel">Checking…</div>
-        <div id="syncStatus" style="font-size:12px;color:var(--text2);">Your data syncs to life_hub_data.json in your Google Drive</div>
+        <div style="font-weight:600;margin-bottom:4px;" id="settings-sync-status">Checking…</div>
+        <div style="font-size:12px;color:var(--text3);">Data syncs to <code>life_hub_data.json</code> in your Google Drive</div>
       </div>
-      <button class="btn-ghost" onclick="signIn()" style="font-size:12px;">Reconnect</button>
-    </div>
-  </div>
-
-  <div class="section-title">Calendar Settings</div>
-  <div class="card" style="margin-bottom:24px;">
-    <div>
-      <label class="form-label">Calendar Email</label>
-      <input type="email" class="form-input" id="settingsCalendarEmail" placeholder="lauraspires5@gmail.com" value="lauraspires5@gmail.com">
-      <button class="btn-primary" onclick="saveCalendarEmail()" style="margin-top:12px;">Save</button>
+      <button class="btn-ghost" onclick="signIn()">Reconnect</button>
     </div>
   </div>
 
   <div class="section-title">Data Management</div>
-  <div class="card" style="margin-bottom:24px;">
-    <button class="btn-primary" onclick="exportData()" style="width:100%;margin-bottom:12px;">Export Data as JSON</button>
-    <button class="btn-ghost" onclick="importData()" style="width:100%;">Import Data from JSON</button>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="exportData()">Export JSON</button>
+      <button class="btn-ghost" onclick="importData()">Import JSON</button>
+    </div>
   </div>
 
   <div class="section-title">About</div>
   <div class="card">
-    <div style="color:var(--text2);line-height:1.8;">
-      <div style="margin-bottom:12px;"><strong>Life Hub</strong></div>
-      <div style="font-size:13px;margin-bottom:16px;">Your personal dashboard for managing goals, notes, tasks, and everything that matters to you.</div>
-      <div style="font-size:11px;color:var(--text3);">Version 1.0 • Built with care • Data syncs to your Google Drive</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+      <strong>Life Hub</strong> — Your personal dashboard.<br>
+      <span style="font-size:11px;color:var(--text3);">Data syncs to Google Drive · Calendar via Google Calendar API · Tasks via TickTick</span>
     </div>
   </div>
 </div>
 
+</div><!-- /main -->
+
+<!-- TRAVEL MODAL -->
+<div class="modal-overlay" id="travel-modal">
+  <div class="modal">
+    <div class="modal-title">Add Travel Destination</div>
+    <div class="form-row form-row-2" style="margin-bottom:10px;">
+      <div><label class="form-label">Place</label><input type="text" class="form-input" id="travelPlace" placeholder="Paris"></div>
+      <div><label class="form-label">Country</label><input type="text" class="form-input" id="travelCountry" placeholder="France"></div>
+    </div>
+    <div><label class="form-label">Status</label>
+      <select class="form-select" id="travelPriority">
+        <option value="dream">Dream</option>
+        <option value="planned">Planned</option>
+        <option value="done">Done ✓</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('travel-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveTravelItem()">Save</button>
+    </div>
+  </div>
 </div>
 
+<!-- MILESTONE MODAL -->
+<div class="modal-overlay" id="milestone-modal">
+  <div class="modal">
+    <div class="modal-title">Add Life Milestone</div>
+    <div class="form-row form-row-2" style="margin-bottom:10px;">
+      <div><label class="form-label">Milestone</label><input type="text" class="form-input" id="milestoneTitle" placeholder="Buy a house"></div>
+      <div><label class="form-label">Target Year</label><input type="number" class="form-input" id="milestoneYear" placeholder="2027" min="2026" max="2050"></div>
+    </div>
+    <div><label class="form-label">Status</label>
+      <select class="form-select" id="milestoneStatus">
+        <option value="dream">Dream</option>
+        <option value="planned">Planned</option>
+        <option value="done">Done ✓</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('milestone-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveMilestone()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-/* ============================================================
-   GOOGLE DRIVE SYNC LAYER (matches Finance Hub / Health Hub pattern exactly)
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════ */
 const CLIENT_ID       = '56935101632-caejt9kn3bp3t3c8t3cc1csk7m6h4d3h.apps.googleusercontent.com';
 const DRIVE_FILE_NAME = 'life_hub_data.json';
-const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly';
+const SCOPES          = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
 
-let gAccessToken  = null;
-let gDriveFileId  = null;
-let gSyncTimeout  = null;
-let gSyncEnabled  = false;
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+let gToken       = null;
+let gDriveFileId = null;
+let gSyncTimer   = null;
 
 let userData = {
-  notes: [],
+  notes: [],          // quick captures
   goals: [],
   bucketList: [],
   travelWishlist: [],
   milestones: [],
   monthNotes: {},
   hubTasks: [],
-  settings: { calendarEmail: 'lauraspires5@gmail.com' }
+  ticktickCache: { today: [], upcoming: [], fetchedAt: null }
 };
 
-let currentNoteId = null;
-
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE SIGN-IN
+═══════════════════════════════════════════════════════════ */
 function signIn() {
   if (!window.google || !google.accounts) {
-    alert('Google Identity Services not loaded yet — please wait a moment and try again.');
+    showToast('Google script not ready — please wait a moment');
     return;
   }
-  const client = google.accounts.oauth2.initTokenClient({
+  google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
-    scope: DRIVE_SCOPE,
+    scope: SCOPES,
     callback: async (resp) => {
-      if (resp.error) { setSyncStatus('error', 'Sign-in failed'); return; }
-      gAccessToken  = resp.access_token;
-      gSyncEnabled  = true;
+      if (resp.error) { showToast('Sign-in failed: ' + resp.error); return; }
+      gToken = resp.access_token;
       setSyncStatus('saving', 'Loading…');
       await loadFromDrive();
       launchApp();
-    },
-  });
-  client.requestAccessToken();
+    }
+  }).requestAccessToken();
 }
 
+function signOut() {
+  gToken = null;
+  gDriveFileId = null;
+  document.getElementById('signin-overlay').classList.remove('hidden');
+  document.getElementById('sync-indicator').style.display = 'none';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LAUNCH
+═══════════════════════════════════════════════════════════ */
 function launchApp() {
-  document.getElementById('sync-overlay').classList.add('hidden');
+  document.getElementById('signin-overlay').classList.add('hidden');
   document.getElementById('sync-indicator').style.display = 'flex';
-  // Update settings page status
-  const lbl = document.getElementById('syncStatusLabel');
-  if (lbl) lbl.textContent = '✓ Connected to Google Drive';
-  if (lbl) lbl.style.color = 'var(--violet)';
-  initializeApp();
-  fetchTodayEvents();
+
+  // Sidebar username
+  const u = document.getElementById('sidebar-user');
+  if (u) u.textContent = 'lauraspires5@gmail.com';
+
+  // Settings page
+  const ss = document.getElementById('settings-sync-status');
+  if (ss) { ss.textContent = '✓ Connected'; ss.style.color = 'var(--violet)'; }
+
   setSyncStatus('ok', 'Synced');
+  updateGreeting();
+  calculateCountdown();
+  renderAllData();
+  fetchCalendarToday();
+  fetchCalendarWeek();
+  loadTickTickTasks();
 }
 
-async function fetchTodayEvents() {
-  if (!gAccessToken) return;
-  const now = new Date();
-  const startOfDay  = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-  const endOfDay    = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-  const in7Days     = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59);
-
-  // Fetch today's events
-  try {
-    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(startOfDay.toISOString())}&timeMax=${encodeURIComponent(endOfDay.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=15`;
-    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + gAccessToken } });
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error('Status ' + res.status + ': ' + errText.substring(0, 200));
-    }
-    const data = await res.json();
-    renderTodayEvents(data.items || []);
-  } catch (e) {
-    const el = document.getElementById('scheduleContainer');
-    if (el) el.innerHTML = `<div style="color:var(--coral);font-size:13px;padding:8px 0;">
-      Calendar error: ${e.message}<br>
-      <span style="color:var(--text3);font-size:12px;margin-top:4px;display:block;">
-        This usually means the Google Calendar API isn't enabled for this app, or the OAuth app isn't authorised for this domain.
-        <a href="https://calendar.google.com" target="_blank" style="color:var(--violet);">Open Google Calendar ↗</a>
-      </span>
-    </div>`;
-    console.error('Calendar fetch error:', e);
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE CALENDAR
+═══════════════════════════════════════════════════════════ */
+async function calFetch(startISO, endISO) {
+  const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`
+    + `?timeMin=${encodeURIComponent(startISO)}`
+    + `&timeMax=${encodeURIComponent(endISO)}`
+    + `&singleEvents=true&orderBy=startTime&maxResults=30`;
+  const res = await fetch(url, { headers: { Authorization: 'Bearer ' + gToken } });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`Calendar API ${res.status}: ${t.substring(0,180)}`);
   }
+  return (await res.json()).items || [];
+}
 
-  // Fetch next 7 days events
+async function fetchCalendarToday() {
+  const el = document.getElementById('today-events-list');
   try {
-    const url7 = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(now.toISOString())}&timeMax=${encodeURIComponent(in7Days.toISOString())}&singleEvents=true&orderBy=startTime&maxResults=25`;
-    const res7 = await fetch(url7, { headers: { Authorization: 'Bearer ' + gAccessToken } });
-    if (!res7.ok) {
-      const errText7 = await res7.text();
-      throw new Error('Status ' + res7.status + ': ' + errText7.substring(0, 200));
+    const now   = new Date();
+    const start = new Date(now); start.setHours(0,0,0,0);
+    const end   = new Date(now); end.setHours(23,59,59,999);
+    const events = await calFetch(start.toISOString(), end.toISOString());
+
+    // Update stat
+    document.getElementById('stat-events').textContent = events.length;
+    document.getElementById('stat-events-sub').textContent = events.length === 1 ? '1 event' : events.length + ' events';
+
+    if (!events.length) {
+      el.innerHTML = '<div class="empty-state">Nothing on the calendar today 🎉</div>';
+      return;
     }
-    const data7 = await res7.json();
-    renderUpcomingEvents(data7.items || []);
-  } catch (e) {
-    const el = document.getElementById('upcomingEvents');
-    if (el) el.innerHTML = `<div style="color:var(--coral);font-size:13px;padding:8px 0;">Could not load upcoming events: ${e.message}</div>`;
-    console.error('Upcoming events fetch error:', e);
+    el.innerHTML = '<div class="event-list">' + events.map(ev => {
+      const isAllDay = !ev.start.dateTime;
+      const timeStr  = isAllDay ? 'All day'
+        : new Date(ev.start.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})
+          + ' – '
+          + new Date(ev.end.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="event-row">
+        <div class="event-time">${timeStr}</div>
+        <div class="event-body">
+          <div class="event-title">${ev.summary || '(No title)'}</div>
+          ${ev.location ? `<div class="event-loc">📍 ${ev.location}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch(e) {
+    el.innerHTML = `<div class="error-msg">Calendar error: ${e.message}<br><span style="font-size:11px;color:var(--text3);">If this keeps happening, the Google Cloud project may need Calendar API access enabled.</span></div>`;
+    document.getElementById('stat-events').textContent = '–';
   }
 }
 
-function renderTodayEvents(events) {
-  const el = document.getElementById('scheduleContainer');
-  if (!el) return;
-  if (!events.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0;">No events today 🎉</div>';
+async function fetchCalendarWeek() {
+  const el = document.getElementById('week-events-list');
+  try {
+    const now   = new Date();
+    const start = new Date(now); start.setHours(0,0,0,0);
+    const end   = new Date(now); end.setDate(end.getDate() + 7); end.setHours(23,59,59,999);
+    const events = await calFetch(start.toISOString(), end.toISOString());
+
+    if (!events.length) {
+      el.innerHTML = '<div class="empty-state">No events in the next 7 days 🎉</div>';
+      return;
+    }
+
+    // Group by day
+    const groups = {};
+    events.forEach(ev => {
+      const d   = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
+      const key = d.toDateString();
+      if (!groups[key]) groups[key] = { date: d, evs: [] };
+      groups[key].evs.push(ev);
+    });
+
+    const todayStr = new Date().toDateString();
+    el.innerHTML = Object.values(groups).map(g => {
+      const isToday = g.date.toDateString() === todayStr;
+      const label   = isToday ? 'Today'
+        : g.date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+      return `<div class="day-group">
+        <div class="day-label ${isToday ? 'today-label' : ''}">${label}</div>
+        <div class="event-list">${g.evs.map(ev => {
+          const isAllDay = !ev.start.dateTime;
+          const timeStr  = isAllDay ? 'All day'
+            : new Date(ev.start.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+          return `<div class="event-row">
+            <div class="event-time">${timeStr}</div>
+            <div class="event-body">
+              <div class="event-title">${ev.summary || '(No title)'}</div>
+              ${ev.location ? `<div class="event-loc">📍 ${ev.location}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = `<div class="error-msg">Could not load calendar: ${e.message}</div>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TICKTICK (loaded from Drive cache — refreshed on sign-in)
+   The cache is stored in userData.ticktickCache in Drive.
+   Since TickTick doesn't have a browser-accessible API,
+   we display the cached data and show last-fetched time.
+   To refresh: Claude can update the cache via the Cowork MCP.
+═══════════════════════════════════════════════════════════ */
+function loadTickTickTasks() {
+  renderTickTickToday();
+  renderTickTickUpcoming();
+}
+
+function renderTickTickToday() {
+  const el = document.getElementById('today-tasks-list');
+  const el2 = document.getElementById('tt-today');
+  const cache = userData.ticktickCache || {};
+  const tasks = cache.today || [];
+
+  if (!tasks.length) {
+    const msg = '<div class="empty-state">No tasks due today ✓</div>';
+    if (el) el.innerHTML = msg;
+    if (el2) el2.innerHTML = msg;
+    document.getElementById('stat-tasks').textContent = '0';
+    document.getElementById('stat-tasks-sub').textContent = 'all clear';
     return;
   }
-  el.innerHTML = events.map(ev => {
-    const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
-    const end   = ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
-    const timeStr = start
-      ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
-        + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '')
-      : 'All day';
-    return `<div style="display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
-      <div style="min-width:80px;font-size:12px;color:var(--violet);font-weight:600;padding-top:2px;">${timeStr}</div>
-      <div>
-        <div style="font-size:14px;font-weight:500;">${ev.summary || '(No title)'}</div>
-        ${ev.location ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;">📍 ${ev.location}</div>` : ''}
+
+  const now = new Date(); now.setHours(0,0,0,0);
+  let overdueCount = 0;
+
+  const html = '<div class="task-list">' + tasks.map(t => {
+    const due    = t.due_date ? new Date(t.due_date) : null;
+    const isPast = due && due < now;
+    if (isPast) overdueCount++;
+    const dotClass = isPast ? 'overdue' : (t.priority === 5 ? 'p5' : t.priority === 3 ? 'p3' : '');
+    const dueStr   = due ? due.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '';
+    return `<div class="task-row">
+      <div class="task-dot ${dotClass}"></div>
+      <div class="task-body">
+        <div class="task-title">${t.title}</div>
+        ${dueStr ? `<div class="task-meta ${isPast ? 'overdue' : ''}">${isPast ? 'Overdue · ' : ''}${dueStr}</div>` : ''}
       </div>
     </div>`;
-  }).join('');
-  const cnt = document.getElementById('eventsCount');
-  if (cnt) cnt.textContent = events.length;
+  }).join('') + '</div>';
+
+  if (el) el.innerHTML = html;
+  if (el2) el2.innerHTML = html;
+
+  document.getElementById('stat-tasks').textContent = tasks.length;
+  document.getElementById('stat-tasks-sub').textContent = overdueCount > 0 ? overdueCount + ' overdue' : 'due today';
+
+  if (cache.fetchedAt) {
+    const note = `<div style="font-size:10px;color:var(--text3);margin-top:8px;text-align:right;">cached ${new Date(cache.fetchedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>`;
+    if (el2) el2.innerHTML += note;
+  }
 }
 
-function renderUpcomingEvents(events) {
-  const el = document.getElementById('upcomingEvents');
+function renderTickTickUpcoming() {
+  const el = document.getElementById('tt-upcoming');
   if (!el) return;
-  if (!events.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px 0;">No events in the next 7 days 🎉</div>';
+  const tasks = (userData.ticktickCache || {}).upcoming || [];
+
+  if (!tasks.length) {
+    el.innerHTML = '<div class="empty-state">No upcoming tasks</div>';
     return;
   }
-  // Group by day
-  const days = {};
-  events.forEach(ev => {
-    const d = ev.start.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start.date);
-    const key = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'short' });
-    if (!days[key]) days[key] = [];
-    days[key].push(ev);
-  });
-  el.innerHTML = Object.entries(days).map(([day, evs]) => `
-    <div style="margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--violet);margin-bottom:8px;">${day}</div>
-      ${evs.map(ev => {
-        const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
-        const end   = ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
-        const timeStr = start
-          ? start.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })
-            + (end ? ' – ' + end.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) : '')
-          : 'All day';
-        return `<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">
-          <div style="min-width:80px;font-size:12px;color:var(--text2);font-weight:500;padding-top:1px;">${timeStr}</div>
-          <div style="font-size:13px;font-weight:500;">${ev.summary || '(No title)'}</div>
-        </div>`;
-      }).join('')}
-    </div>
-  `).join('');
+
+  el.innerHTML = '<div class="task-list">' + tasks.map(t => {
+    const due    = t.due_date ? new Date(t.due_date) : null;
+    const dueStr = due ? due.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
+    const dotClass = t.priority === 5 ? 'p5' : t.priority === 3 ? 'p3' : '';
+    return `<div class="task-row">
+      <div class="task-dot ${dotClass}"></div>
+      <div class="task-body">
+        <div class="task-title">${t.title}</div>
+        ${dueStr ? `<div class="task-meta">${dueStr}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + '</div>';
 }
 
-/* ---- Drive helpers (identical pattern to Finance Hub) ---- */
-async function driveRequest(method, url, body) {
-  const headers = { Authorization: 'Bearer ' + gAccessToken };
-  if (body && typeof body === 'string') headers['Content-Type'] = 'application/json';
-  const res = await fetch(url, { method, headers, body });
-  if (!res.ok) throw new Error('Drive ' + res.status + ': ' + (await res.text()));
-  const ct = res.headers.get('content-type') || '';
-  return ct.includes('json') ? res.json() : res.text();
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE DRIVE SYNC
+═══════════════════════════════════════════════════════════ */
+async function driveReq(method, url, body) {
+  const h = { Authorization: 'Bearer ' + gToken };
+  if (body && typeof body === 'string') h['Content-Type'] = 'application/json';
+  const r = await fetch(url, { method, headers: h, body });
+  if (!r.ok) throw new Error('Drive ' + r.status + ': ' + (await r.text()).substring(0,200));
+  const ct = r.headers.get('content-type') || '';
+  return ct.includes('json') ? r.json() : r.text();
 }
 
 async function findDriveFile() {
   const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and trashed=false`);
-  const r = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`);
+  const r = await driveReq('GET', `https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`);
   return r.files && r.files.length ? r.files[0].id : null;
 }
 
@@ -991,530 +1053,409 @@ async function loadFromDrive() {
   try {
     gDriveFileId = await findDriveFile();
     if (gDriveFileId) {
-      const raw = await driveRequest('GET', `https://www.googleapis.com/drive/v3/files/${gDriveFileId}?alt=media`);
-      userData = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const raw = await driveReq('GET', `https://www.googleapis.com/drive/v3/files/${gDriveFileId}?alt=media`);
+      const loaded = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      // Merge so new keys don't get lost
+      userData = { ...userData, ...loaded };
+      // Ensure cache structure exists
+      if (!userData.ticktickCache) userData.ticktickCache = { today: [], upcoming: [], fetchedAt: null };
     } else {
       await saveToDrive();
     }
-  } catch (e) {
-    console.error('Load error:', e);
+  } catch(e) {
+    console.error('Drive load error:', e);
     setSyncStatus('error', 'Load failed');
   }
 }
 
 async function saveToDrive() {
-  if (!gSyncEnabled || !gAccessToken) return;
+  if (!gToken) return;
   setSyncStatus('saving', 'Saving…');
   try {
     const body = JSON.stringify(userData, null, 2);
     if (gDriveFileId) {
-      await driveRequest('PATCH',
-        `https://www.googleapis.com/upload/drive/v3/files/${gDriveFileId}?uploadType=media`,
-        body);
+      await driveReq('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${gDriveFileId}?uploadType=media`, body);
     } else {
-      const meta = await driveRequest('POST',
-        'https://www.googleapis.com/drive/v3/files',
-        JSON.stringify({ name: DRIVE_FILE_NAME, mimeType: 'application/json' }));
+      const meta = await driveReq('POST', 'https://www.googleapis.com/drive/v3/files', JSON.stringify({ name: DRIVE_FILE_NAME, mimeType: 'application/json' }));
       gDriveFileId = meta.id;
-      await driveRequest('PATCH',
-        `https://www.googleapis.com/upload/drive/v3/files/${gDriveFileId}?uploadType=media`,
-        body);
+      await driveReq('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${gDriveFileId}?uploadType=media`, body);
     }
     setSyncStatus('ok', 'Synced');
-  } catch (e) {
-    console.error('Save error:', e);
+  } catch(e) {
+    console.error('Drive save error:', e);
     setSyncStatus('error', 'Save failed');
   }
 }
 
 function scheduleSave() {
-  clearTimeout(gSyncTimeout);
-  gSyncTimeout = setTimeout(saveToDrive, 1200);
+  clearTimeout(gSyncTimer);
+  gSyncTimer = setTimeout(saveToDrive, 1500);
 }
 
-function saveDataToDrive() { scheduleSave(); }
-
+/* ═══════════════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════════════ */
 function setSyncStatus(state, label) {
-  const indicator = document.getElementById('sync-indicator');
-  const dot       = document.getElementById('sync-dot');
-  const lbl       = document.getElementById('sync-label');
-  if (!indicator) return;
-  indicator.classList.remove('saving', 'error');
-  if (state === 'saving') indicator.classList.add('saving');
-  if (state === 'error')  indicator.classList.add('error');
-  if (lbl) lbl.textContent = label || '';
+  const el  = document.getElementById('sync-indicator');
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (!el) return;
+  el.className = state === 'saving' ? 'saving' : state === 'error' ? 'error' : '';
+  if (lbl) lbl.textContent = label;
 }
 
-function updateSyncStatus(status) {
-  if (status === 'connected') setSyncStatus('ok', 'Synced');
-  else if (status === 'saving') setSyncStatus('saving', 'Saving…');
-  else if (status === 'error') setSyncStatus('error', 'Error');
+function updateGreeting() {
+  const h = new Date().getHours();
+  const g = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  const el = document.getElementById('greeting');
+  if (el) el.textContent = g + ', Laura';
+  const d = document.getElementById('todayDate');
+  if (d) d.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function calculateCountdown() {
+  const job   = new Date('2026-06-15'); job.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days  = Math.round((job - today) / 86400000);
+  const valEl = document.getElementById('countdown-val');
+  const lblEl = document.getElementById('countdown-label');
+  const subEl = document.getElementById('countdown-sub');
+  const card  = document.getElementById('countdown-card');
+  if (days > 0) {
+    valEl.textContent = days;
+    lblEl.textContent = 'Days to New Job';
+    subEl.textContent = 'June 15, 2026';
+    card.classList.add('accent-amber');
+  } else if (days === 0) {
+    valEl.textContent = '🎉';
+    lblEl.textContent = "It's the day!";
+    subEl.textContent = 'First day at your new job';
+    card.classList.add('accent-teal');
+  } else {
+    valEl.textContent = Math.abs(days);
+    lblEl.textContent = 'Days In';
+    subEl.textContent = 'At your new job 💼';
+    card.classList.add('accent-violet');
+  }
 }
 
 function toggleSidebar() {
   document.querySelector('.sidebar').classList.toggle('open');
   document.querySelector('.sidebar-overlay').classList.toggle('open');
 }
-
 function closeSidebar() {
   document.querySelector('.sidebar').classList.remove('open');
   document.querySelector('.sidebar-overlay').classList.remove('open');
 }
 
-function switchPage(pageName) {
+function switchPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + pageName).classList.add('active');
-  document.querySelector('[onclick*="' + pageName + '"]').classList.add('active');
+  document.getElementById('page-' + name).classList.add('active');
+  const nav = document.querySelector(`.nav-item[onclick*="'${name}'"]`);
+  if (nav) nav.classList.add('active');
   closeSidebar();
 }
 
-function initializeApp() {
-  updateGreeting();
-  updateTodayDate();
-  calculateDaysToJob();
-  updateTaskCount();
-  renderNotes();
-  renderGoals();
-  renderMonthGrid();
-  renderAllPages();
+function switchTaskTab(btn, tab) {
+  document.querySelectorAll('.etab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tasks-ticktick').style.display = tab === 'ticktick' ? '' : 'none';
+  document.getElementById('tasks-hub').style.display      = tab === 'hub'      ? '' : 'none';
 }
 
-function updateGreeting() {
-  const hour = new Date().getHours();
-  let greeting = 'Good morning';
-  if (hour >= 12 && hour < 18) greeting = 'Good afternoon';
-  if (hour >= 18) greeting = 'Good evening';
-  document.getElementById('greeting').textContent = greeting + ', Laura';
+function refreshToday() {
+  if (!gToken) return;
+  document.getElementById('today-events-list').innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  fetchCalendarToday();
 }
 
-function updateTodayDate() {
-  const today = new Date();
-  const options = { weekday: 'long', month: 'long', day: 'numeric' };
-  document.getElementById('todayDate').textContent = today.toLocaleDateString('en-US', options);
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showTravelModal()    { openModal('travel-modal'); }
+function showMilestoneModal() { openModal('milestone-modal'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-function calculateDaysToJob() {
-  const jobDate = new Date('2026-06-15');
-  const today   = new Date();
-  today.setHours(0, 0, 0, 0);
-  jobDate.setHours(0, 0, 0, 0);
-  const diffMs  = jobDate - today;
-  const days    = Math.round(diffMs / (1000 * 60 * 60 * 24));
-  const valEl   = document.getElementById('daysToJob');
-  const lblEl   = document.getElementById('jobCountdownLabel');
-  const subEl   = document.getElementById('jobCountdownSub');
-  if (days > 0) {
-    valEl.textContent = days;
-    lblEl.textContent = 'Days to New Job';
-    subEl.textContent = 'June 15, 2026';
-  } else if (days === 0) {
-    valEl.textContent = '🎉';
-    lblEl.textContent = 'It\'s the day!';
-    subEl.textContent = 'First day at your new job';
-  } else {
-    // days is negative — show how many days in
-    valEl.textContent = Math.abs(days);
-    lblEl.textContent = 'Days In';
-    subEl.textContent = 'At your new job 💼';
-  }
-}
-
+/* ═══════════════════════════════════════════════════════════
+   QUICK CAPTURE
+═══════════════════════════════════════════════════════════ */
 function saveQuickCapture() {
-  const text = document.getElementById('quickCaptureInput').value.trim();
-  if (!text) {
-    showToast('Please enter some text');
-    return;
-  }
-  const note = {
-    id: Date.now(),
-    title: 'Quick Note - ' + new Date().toLocaleDateString(),
-    content: text,
-    tags: ['quick'],
-    date: new Date().toISOString()
-  };
-  userData.notes.unshift(note);
+  const txt = document.getElementById('quickCaptureInput').value.trim();
+  if (!txt) return showToast('Please write something first');
+  userData.notes.unshift({ id: Date.now(), text: txt, date: new Date().toISOString() });
   document.getElementById('quickCaptureInput').value = '';
-  saveDataToDrive();
-  showToast('Note saved!');
-  renderNotes();
+  scheduleSave();
+  renderQuickCaptures();
+  showToast('Captured!');
 }
 
-function createNewNote() {
-  currentNoteId = null;
-  document.getElementById('noteTitle').value = '';
-  document.getElementById('noteContent').value = '';
-  document.getElementById('noteTags').value = '';
-  document.getElementById('noteEditor').style.display = 'block';
-  document.getElementById('noteEmptyState').style.display = 'none';
-}
-
-function renderNotes() {
-  const list = document.getElementById('notesList');
-  if (userData.notes.length === 0) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:13px;">No notes yet</div>';
+function renderQuickCaptures() {
+  const el = document.getElementById('quick-captures-list');
+  if (!el) return;
+  if (!userData.notes.length) {
+    el.innerHTML = '<div class="empty-state">No quick captures yet.</div>';
     return;
   }
-  list.innerHTML = userData.notes.map(note => `
-    <div class="note-item" onclick="selectNote(${note.id})">
-      <div class="note-item-title">${note.title}</div>
-      <div class="note-item-date">${new Date(note.date).toLocaleDateString()}</div>
-      ${note.tags && note.tags.length > 0 ? '<div style="margin-top:6px;">' + note.tags.map(tag => '<span class="pill-sm pill-violet" style="margin-right:4px;">' + tag + '</span>').join('') + '</div>' : ''}
-      <div class="note-item-preview">${note.content.substring(0, 60)}...</div>
-    </div>
-  `).join('');
+  el.innerHTML = userData.notes.map(n => `
+    <div class="list-row">
+      <div>
+        <div style="font-size:13px;">${n.text}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">${new Date(n.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <button class="btn-row-del" onclick="deleteNote(${n.id})">✕</button>
+    </div>`).join('');
 }
 
-function selectNote(id) {
-  const note = userData.notes.find(n => n.id === id);
-  if (!note) return;
-  currentNoteId = id;
-  document.getElementById('noteTitle').value = note.title;
-  document.getElementById('noteContent').value = note.content;
-  document.getElementById('noteTags').value = note.tags ? note.tags.join(', ') : '';
-  document.getElementById('noteEditor').style.display = 'block';
-  document.getElementById('noteEmptyState').style.display = 'none';
+function deleteNote(id) {
+  userData.notes = userData.notes.filter(n => n.id !== id);
+  scheduleSave();
+  renderQuickCaptures();
 }
 
-function saveCurrentNote() {
-  const title = document.getElementById('noteTitle').value.trim();
-  const content = document.getElementById('noteContent').value.trim();
-  if (!title || !content) {
-    showToast('Please fill in title and content');
-    return;
-  }
-  const tags = document.getElementById('noteTags').value.split(',').map(t => t.trim()).filter(t => t);
-  if (currentNoteId) {
-    const note = userData.notes.find(n => n.id === currentNoteId);
-    if (note) {
-      note.title = title;
-      note.content = content;
-      note.tags = tags;
-    }
-  } else {
-    userData.notes.unshift({
-      id: Date.now(),
-      title: title,
-      content: content,
-      tags: tags,
-      date: new Date().toISOString()
-    });
-  }
-  saveDataToDrive();
-  renderNotes();
-  showToast('Note saved!');
-}
-
-function deleteCurrentNote() {
-  if (!currentNoteId) return;
-  if (!confirm('Delete this note?')) return;
-  userData.notes = userData.notes.filter(n => n.id !== currentNoteId);
-  currentNoteId = null;
-  document.getElementById('noteEditor').style.display = 'none';
-  document.getElementById('noteEmptyState').style.display = 'block';
-  saveDataToDrive();
-  renderNotes();
-  showToast('Note deleted');
-}
-
-function updateTaskCount() {
-  document.getElementById('tasksDueCount').textContent = userData.hubTasks.length;
-}
-
+/* ═══════════════════════════════════════════════════════════
+   HUB TASKS
+═══════════════════════════════════════════════════════════ */
 function addHubTask() {
   const title = document.getElementById('newTaskTitle').value.trim();
-  const priority = document.getElementById('newTaskPriority').value;
-  const dueDate = document.getElementById('newTaskDueDate').value;
-  if (!title) {
-    showToast('Please enter a task title');
-    return;
-  }
+  if (!title) return showToast('Please enter a title');
   userData.hubTasks.unshift({
     id: Date.now(),
-    title: title,
-    priority: priority,
-    dueDate: dueDate,
-    completed: false
+    title,
+    priority: document.getElementById('newTaskPriority').value,
+    dueDate:  document.getElementById('newTaskDueDate').value,
+    done: false
   });
   document.getElementById('newTaskTitle').value = '';
   document.getElementById('newTaskDueDate').value = '';
-  saveDataToDrive();
-  updateTaskCount();
-  renderTasks();
+  scheduleSave();
+  renderHubTasks();
+  updateGoalsStat();
   showToast('Task added!');
 }
 
-function renderTasks() {
-  const list = document.getElementById('hubTasksList');
-  if (userData.hubTasks.length === 0) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:12px 0;">No tasks yet</div>';
+function renderHubTasks() {
+  const el = document.getElementById('hubTasksList');
+  if (!userData.hubTasks.length) {
+    el.innerHTML = '<div class="empty-state">No hub tasks yet</div>';
     return;
   }
-  list.innerHTML = userData.hubTasks.map(task => `
-    <div class="task-item">
-      <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
-      <div class="task-info" style="flex:1;">
-        <div class="task-title" style="${task.completed ? 'text-decoration:line-through;opacity:0.5;' : ''}">${task.title}</div>
-        ${task.dueDate ? '<div style="font-size:11px;color:var(--text3);margin-top:2px;">Due: ' + new Date(task.dueDate).toLocaleDateString() + '</div>' : ''}
-      </div>
-      <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
-      <button class="btn-row-del" onclick="deleteTask(${task.id})">✕</button>
-    </div>
-  `).join('');
+  el.innerHTML = userData.hubTasks.map(t => `
+    <div class="hub-task-row">
+      <input type="checkbox" class="hub-checkbox" ${t.done ? 'checked' : ''} onchange="toggleHubTask(${t.id})">
+      <div class="hub-task-title ${t.done ? 'done' : ''}" style="flex:1;">${t.title}</div>
+      ${t.dueDate ? `<div class="hub-task-due">Due ${new Date(t.dueDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>` : ''}
+      <span class="priority-badge priority-${t.priority}">${t.priority.toUpperCase()}</span>
+      <button class="btn-row-del" onclick="deleteHubTask(${t.id})">✕</button>
+    </div>`).join('');
 }
 
-function toggleTask(id) {
-  const task = userData.hubTasks.find(t => t.id === id);
-  if (task) {
-    task.completed = !task.completed;
-    saveDataToDrive();
-    renderTasks();
-  }
+function toggleHubTask(id) {
+  const t = userData.hubTasks.find(t => t.id === id);
+  if (t) { t.done = !t.done; scheduleSave(); renderHubTasks(); }
 }
-
-function deleteTask(id) {
+function deleteHubTask(id) {
   userData.hubTasks = userData.hubTasks.filter(t => t.id !== id);
-  saveDataToDrive();
-  renderTasks();
-  updateTaskCount();
-  showToast('Task deleted');
+  scheduleSave(); renderHubTasks(); showToast('Deleted');
 }
 
+/* ═══════════════════════════════════════════════════════════
+   GOALS
+═══════════════════════════════════════════════════════════ */
 function addGoal() {
   const title = document.getElementById('newGoalTitle').value.trim();
-  const category = document.getElementById('newGoalCategory').value;
-  const date = document.getElementById('newGoalDate').value;
-  const desc = document.getElementById('newGoalDesc').value.trim();
-  if (!title) {
-    showToast('Please enter a goal title');
-    return;
-  }
+  if (!title) return showToast('Please enter a title');
   userData.goals.unshift({
     id: Date.now(),
-    title: title,
-    category: category,
-    targetDate: date,
-    description: desc,
+    title,
+    category: document.getElementById('newGoalCategory').value,
+    targetDate: document.getElementById('newGoalDate').value,
+    description: document.getElementById('newGoalDesc').value.trim(),
     progress: 0
   });
   document.getElementById('newGoalTitle').value = '';
   document.getElementById('newGoalDate').value = '';
   document.getElementById('newGoalDesc').value = '';
-  saveDataToDrive();
-  renderGoals();
-  showToast('Goal added!');
+  scheduleSave(); renderGoals(); updateGoalsStat(); showToast('Goal added!');
 }
 
 function renderGoals() {
-  const list = document.getElementById('goalsList');
-  const categorized = {};
-  userData.goals.forEach(goal => {
-    if (!categorized[goal.category]) categorized[goal.category] = [];
-    categorized[goal.category].push(goal);
-  });
-
-  if (userData.goals.length === 0) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:13px;">No goals yet. Create one to get started!</div>';
+  const el = document.getElementById('goalsList');
+  if (!userData.goals.length) {
+    el.innerHTML = '<div class="empty-state">No goals yet.</div>';
     return;
   }
-
-  let html = '';
-  Object.entries(categorized).forEach(([category, goals]) => {
-    html += '<div style="margin-bottom:24px;"><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">' + category + '</div>';
-    goals.forEach(goal => {
-      html += '<div class="goal-card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;"><div><div style="font-weight:500;">' + goal.title + '</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">' + (goal.targetDate ? 'Target: ' + new Date(goal.targetDate).toLocaleDateString() : 'No deadline') + '</div></div><button class="btn-row-del" onclick="deleteGoal(' + goal.id + ')">✕</button></div>' + (goal.description ? '<div style="font-size:12px;color:var(--text2);margin-bottom:8px;">' + goal.description + '</div>' : '') + '<div class="goal-bar-wrap"><div class="goal-bar-track"><div class="goal-bar-fill" style="width:0%;background:var(--violet);"></div></div><div style="font-size:10px;color:var(--text3);margin-top:4px;">0% complete</div></div></div>';
-    });
-    html += '</div>';
+  const cats = {};
+  userData.goals.forEach(g => {
+    if (!cats[g.category]) cats[g.category] = [];
+    cats[g.category].push(g);
   });
-  list.innerHTML = html;
+  el.innerHTML = Object.entries(cats).map(([cat, gs]) => `
+    <div class="goal-cat-label">${cat}</div>
+    ${gs.map(g => `
+      <div class="goal-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">${g.title}</div>
+            ${g.description ? `<div style="font-size:12px;color:var(--text3);margin-top:2px;">${g.description}</div>` : ''}
+            ${g.targetDate ? `<div style="font-size:11px;color:var(--text3);margin-top:3px;">Target: ${new Date(g.targetDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>` : ''}
+          </div>
+          <button class="btn-row-del" onclick="deleteGoal(${g.id})">✕</button>
+        </div>
+        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${g.progress||0}%"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;display:flex;justify-content:space-between;">
+          <span>${g.progress||0}% complete</span>
+          <input type="range" min="0" max="100" value="${g.progress||0}" style="width:100px;cursor:pointer;accent-color:var(--violet);" oninput="updateGoalProgress(${g.id},this.value)">
+        </div>
+      </div>`).join('')}`).join('');
 }
 
+function updateGoalProgress(id, val) {
+  const g = userData.goals.find(g => g.id === id);
+  if (g) { g.progress = +val; scheduleSave(); renderGoals(); }
+}
 function deleteGoal(id) {
   userData.goals = userData.goals.filter(g => g.id !== id);
-  saveDataToDrive();
-  renderGoals();
-  showToast('Goal deleted');
+  scheduleSave(); renderGoals(); updateGoalsStat(); showToast('Deleted');
+}
+function updateGoalsStat() {
+  document.getElementById('stat-goals').textContent = userData.goals.filter(g => (g.progress||0) < 100).length;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   BUCKET LIST / TRAVEL / MILESTONES
+═══════════════════════════════════════════════════════════ */
 function addBucketItem() {
   const item = prompt('Add to bucket list:');
-  if (item) {
-    userData.bucketList.push({ id: Date.now(), title: item, status: 'dream' });
-    saveDataToDrive();
-    renderBucketList();
+  if (item && item.trim()) {
+    userData.bucketList.push({ id: Date.now(), title: item.trim(), status: 'dream' });
+    scheduleSave(); renderBucketList();
   }
 }
-
 function renderBucketList() {
-  const list = document.getElementById('bucketList');
-  if (userData.bucketList.length === 0) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:13px;">No bucket list items yet</div>';
-    return;
-  }
-  list.innerHTML = userData.bucketList.map(item => `
-    <div class="bucket-item">
-      <span>${item.title}</span>
-      <span class="bucket-status status-${item.status}">${item.status.toUpperCase()}</span>
-    </div>
-  `).join('');
-}
-
-function addTravelItem() {
-  document.getElementById('travelPlace').focus();
+  const el = document.getElementById('bucketList');
+  if (!userData.bucketList.length) { el.innerHTML = '<div class="empty-state">Nothing yet</div>'; return; }
+  el.innerHTML = userData.bucketList.map(i => `
+    <div class="list-row">
+      <div class="list-row-title">${i.title}</div>
+      <span class="status-pill status-${i.status}">${i.status.toUpperCase()}</span>
+    </div>`).join('');
 }
 
 function saveTravelItem() {
-  const place = document.getElementById('travelPlace').value.trim();
+  const place   = document.getElementById('travelPlace').value.trim();
   const country = document.getElementById('travelCountry').value.trim();
-  const priority = document.getElementById('travelPriority').value;
-  if (!place || !country) {
-    showToast('Please fill in both fields');
-    return;
-  }
-  userData.travelWishlist.push({ id: Date.now(), place: place, country: country, priority: priority });
+  if (!place || !country) return showToast('Fill in both fields');
+  userData.travelWishlist.push({ id: Date.now(), place, country, priority: document.getElementById('travelPriority').value });
   document.getElementById('travelPlace').value = '';
   document.getElementById('travelCountry').value = '';
-  saveDataToDrive();
-  renderTravelList();
-  showToast('Travel destination added!');
+  closeModal('travel-modal');
+  scheduleSave(); renderTravelList(); showToast('Destination added!');
 }
-
 function renderTravelList() {
-  const list = document.getElementById('travelList');
-  if (userData.travelWishlist.length === 0) {
-    list.innerHTML = '';
-    return;
-  }
-  list.innerHTML = userData.travelWishlist.map(item => `
-    <div class="travel-item">
-      <span>${item.place}, ${item.country}</span>
-      <span class="bucket-status status-${item.priority}">${item.priority.toUpperCase()}</span>
-    </div>
-  `).join('');
-}
-
-function addMilestone() {
-  document.getElementById('milestoneTitle').focus();
+  const el = document.getElementById('travelList');
+  if (!userData.travelWishlist.length) { el.innerHTML = '<div class="empty-state">Nothing yet</div>'; return; }
+  el.innerHTML = userData.travelWishlist.map(i => `
+    <div class="list-row">
+      <div class="list-row-title">${i.place}, ${i.country}</div>
+      <span class="status-pill status-${i.priority}">${i.priority.toUpperCase()}</span>
+    </div>`).join('');
 }
 
 function saveMilestone() {
   const title = document.getElementById('milestoneTitle').value.trim();
-  const year = document.getElementById('milestoneYear').value;
-  const status = document.getElementById('milestoneStatus').value;
-  if (!title || !year) {
-    showToast('Please fill in all fields');
-    return;
-  }
-  userData.milestones.push({ id: Date.now(), title: title, year: year, status: status });
+  const year  = document.getElementById('milestoneYear').value;
+  if (!title || !year) return showToast('Fill in all fields');
+  userData.milestones.push({ id: Date.now(), title, year, status: document.getElementById('milestoneStatus').value });
   document.getElementById('milestoneTitle').value = '';
   document.getElementById('milestoneYear').value = '';
-  saveDataToDrive();
-  renderMilestoneList();
-  showToast('Milestone added!');
+  closeModal('milestone-modal');
+  scheduleSave(); renderMilestoneList(); showToast('Milestone added!');
 }
-
 function renderMilestoneList() {
-  const list = document.getElementById('milestoneList');
-  if (userData.milestones.length === 0) {
-    list.innerHTML = '';
-    return;
-  }
-  list.innerHTML = userData.milestones.map(item => `
-    <div class="milestone-item">
-      <span>${item.title} (${item.year})</span>
-      <span class="bucket-status status-${item.status}">${item.status.toUpperCase()}</span>
-    </div>
-  `).join('');
+  const el = document.getElementById('milestoneList');
+  if (!userData.milestones.length) { el.innerHTML = '<div class="empty-state">Nothing yet</div>'; return; }
+  el.innerHTML = userData.milestones.map(i => `
+    <div class="list-row">
+      <div class="list-row-title">${i.title} <span style="color:var(--text3);font-size:11px;">(${i.year})</span></div>
+      <span class="status-pill status-${i.status}">${i.status.toUpperCase()}</span>
+    </div>`).join('');
 }
 
+/* ═══════════════════════════════════════════════════════════
+   MONTH GRID
+═══════════════════════════════════════════════════════════ */
 function renderMonthGrid() {
-  const grid = document.getElementById('monthGrid');
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  grid.innerHTML = months.map((month, i) => `
-    <div class="month-box" onclick="addMonthNote(${i + 1})" title="Click to add a note for ${month}">${month}</div>
-  `).join('');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cur    = new Date().getMonth();
+  document.getElementById('monthGrid').innerHTML = months.map((m, i) => {
+    const cls = i === cur ? 'current' : userData.monthNotes[i+1] ? 'has-note' : '';
+    return `<div class="month-box ${cls}" onclick="addMonthNote(${i+1})" title="${userData.monthNotes[i+1]||''}">${m}</div>`;
+  }).join('');
 }
-
 function addMonthNote(month) {
-  const note = prompt('Add a note for ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month - 1] + ' 2026:');
-  if (note) {
-    userData.monthNotes[month] = note;
-    saveDataToDrive();
-    showToast('Month note saved!');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const note = prompt(`Note for ${months[month-1]} 2026:`, userData.monthNotes[month]||'');
+  if (note !== null) {
+    if (note.trim()) userData.monthNotes[month] = note.trim();
+    else delete userData.monthNotes[month];
+    scheduleSave(); renderMonthGrid();
   }
 }
 
-function saveCalendarEmail() {
-  const email = document.getElementById('settingsCalendarEmail').value.trim();
-  if (!email) {
-    showToast('Please enter an email');
-    return;
-  }
-  userData.settings.calendarEmail = email;
-  saveDataToDrive();
-  showToast('Calendar email saved!');
-}
-
+/* ═══════════════════════════════════════════════════════════
+   DATA IMPORT/EXPORT
+═══════════════════════════════════════════════════════════ */
 function exportData() {
-  const dataStr = JSON.stringify(userData, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' }));
   a.download = 'life_hub_data.json';
   a.click();
-  showToast('Data exported!');
+  showToast('Exported!');
 }
-
 function importData() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (event) => {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json';
+  inp.onchange = e => {
+    const r = new FileReader();
+    r.onload = ev => {
       try {
-        const imported = JSON.parse(event.target.result);
-        userData = { ...userData, ...imported };
-        saveDataToDrive();
-        initializeApp();
-        showToast('Data imported successfully!');
-      } catch (err) {
-        showToast('Invalid JSON file');
-      }
+        userData = { ...userData, ...JSON.parse(ev.target.result) };
+        scheduleSave(); renderAllData(); showToast('Imported!');
+      } catch { showToast('Invalid JSON'); }
     };
-    reader.readAsText(file);
+    r.readAsText(e.target.files[0]);
   };
-  input.click();
+  inp.click();
 }
 
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.className = 'toast show';
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
-  }, 2500);
-}
-
-function renderAllPages() {
-  renderNotes();
+/* ═══════════════════════════════════════════════════════════
+   RENDER ALL
+═══════════════════════════════════════════════════════════ */
+function renderAllData() {
+  renderQuickCaptures();
   renderGoals();
-  renderTasks();
+  renderHubTasks();
   renderBucketList();
   renderTravelList();
   renderMilestoneList();
   renderMonthGrid();
+  updateGoalsStat();
+  loadTickTickTasks();
 }
 
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  // Always run basic UI init (greeting, date, countdown) regardless of sign-in state
-  initializeApp();
+  updateGreeting();
+  calculateCountdown();
 });
 </script>
-
 </body>
 </html>
