@@ -102,8 +102,10 @@
   .stat-card.accent-amber .stat-val { color:var(--amber); }
 
   /* ── TWO-COLUMN TODAY LAYOUT ── */
-  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;align-items:start; }
-  .today-cols > .card { height:100%; }
+  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px; }
+  .today-cols > .card { display:flex;flex-direction:column;min-height:280px; }
+  .today-cols > .card > #today-events-list,
+  .today-cols > .card > #today-tasks-list { flex:1;overflow-y:auto; }
 
   /* ── CALENDAR EVENTS ── */
   .event-list { display:flex;flex-direction:column;gap:1px; }
@@ -147,8 +149,12 @@
   .quick-capture button:hover { opacity:0.85; }
 
   /* ── GRIDS ── */
-  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start; }
-  .grid-2 > .card { height:100%; }
+  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .grid-2 > .card { display:flex;flex-direction:column;min-height:240px; }
+  .grid-2 > .card > #tt-today,
+  .grid-2 > .card > #tt-upcoming,
+  .grid-2 > .card > #bucketList,
+  .grid-2 > .card > #travelList { flex:1;overflow-y:auto; }
   .grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
   .grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
 
@@ -443,6 +449,10 @@
 
   <!-- TickTick tab -->
   <div id="tasks-ticktick">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--text3);" id="tt-sync-note"></div>
+      <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open TickTick ↗</a>
+    </div>
     <div class="grid-2" style="margin-bottom:14px;">
       <div class="card">
         <div class="card-title">Today &amp; Overdue</div>
@@ -453,9 +463,7 @@
         <div id="tt-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
       </div>
     </div>
-    <div style="text-align:center;padding:4px 0;">
-      <a href="https://ticktick.com" target="_blank" class="btn-primary" style="text-decoration:none;">Open TickTick ↗</a>
-    </div>
+    <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;">Tasks are cached — ask Claude to refresh anytime.</div>
   </div>
 
   <!-- Hub tasks tab -->
@@ -799,13 +807,27 @@ let userData = {
   monthNotes: {},
   hubTasks: [],
   ticktickCache: {
-    fetchedAt: "2026-05-06T20:00:00Z",
+    fetchedAt: "2026-05-06T21:30:00Z",
     today: [
       {"id":"69e3b1b7c02ed14fbbefd795","title":"For Goalhanger 🪩","due_date":"2026-05-05T23:00:00Z","priority":5},
+      {"id":"69f64af03a3051674fea51ea","title":"Look for fungus cream","due_date":"2026-05-06T23:00:00Z","priority":5},
       {"id":"69f20dfc5b48513d04e0d352","title":"Move Neko passcode to iPhone","due_date":"2026-05-05T23:00:00Z","priority":3},
       {"id":"69fb906b367791909bdbb62d","title":"Cat Outfit","due_date":"2026-05-05T23:00:00Z","priority":0},
       {"id":"64663dbb7de4d1d0c7eff529","title":"Washing Away","due_date":"2026-05-05T23:00:00Z","priority":0},
-      {"id":"69d6f3010d11d103d4cb67eb","title":"Apple Watch - £","due_date":"2026-05-05T23:00:00Z","priority":0}
+      {"id":"69d6f3010d11d103d4cb67eb","title":"Apple Watch - £","due_date":"2026-05-05T23:00:00Z","priority":0},
+      {"id":"69efc58aafba512f94074924","title":"Eyelashes","due_date":"2026-05-02T23:00:00Z","priority":0},
+      {"id":"68fdde498dcd5129b3e9f87d","title":"Cancel Amazon selling","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69bfcdc3631a11d29640a91c","title":"Add eggplant recipe back to the app","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69d6e21f5570d1a7cd087044","title":"Add clothes to Whering","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69d6f0df912d5103d4cb66c5","title":"Plan Spring Reset","due_date":"2026-05-06T23:00:00Z","priority":1},
+      {"id":"69e32847dd0d914fbbefcc98","title":"Plan for no snacking and fasting","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69eb29efdb515103d4cbb021","title":"Stop living room door closing","due_date":"2026-05-06T23:00:00Z","priority":3},
+      {"id":"69eb633bbcf2d1a66ef9d6bd","title":"Dinosaur Time","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69f3750739ce11162c1e83a7","title":"Claude","due_date":"2026-05-06T23:00:00Z","priority":3},
+      {"id":"69f9a4d8bd6851162c2c3db3","title":"Where do my little pouches/bags live?","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"68a09023b3b71105acddd57f","title":"SNCK Merch","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69f9f3242f519103d4d35fc4","title":"Pistachios","due_date":"2026-05-06T23:00:00Z","priority":0},
+      {"id":"69fa3c47e325916cf3a0c2a3","title":"Washing Up Liquid","due_date":"2026-05-06T23:00:00Z","priority":0}
     ],
     upcoming: [
       {"id":"68fdde498dcd5129b3e9f87d","title":"Cancel Amazon selling","due_date":"2026-05-06T23:00:00Z","priority":0},
@@ -1073,8 +1095,9 @@ function renderTickTickToday() {
   document.getElementById('stat-tasks-sub').textContent = overdueCount > 0 ? overdueCount + ' overdue' : 'due today';
 
   if (cache.fetchedAt) {
-    const note = `<div style="font-size:10px;color:var(--text3);margin-top:8px;text-align:right;">cached ${new Date(cache.fetchedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>`;
-    if (el2) el2.innerHTML += note;
+    const timeStr = new Date(cache.fetchedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const syncNote = document.getElementById('tt-sync-note');
+    if (syncNote) syncNote.textContent = `Last synced ${timeStr} · Ask Claude to refresh`;
   }
 }
 
