@@ -360,6 +360,7 @@
     .today-cols { grid-template-columns:1fr; }
     .grid-3,.grid-4 { grid-template-columns:1fr 1fr; }
     .link-grid { grid-template-columns:repeat(2,1fr); }
+    .td-cols-3 { grid-template-columns:1fr !important; }
   }
   @media (max-width:600px) {
     .main { padding:58px 12px 60px; }
@@ -537,21 +538,24 @@
 
   <!-- Todoist tab -->
   <div id="tasks-todoist">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="etab active" id="td-filter-today" onclick="setTodoistFilter('today',this)" style="font-size:11px;padding:5px 12px;">Today</button>
-        <button class="etab" id="td-filter-overdue" onclick="setTodoistFilter('overdue',this)" style="font-size:11px;padding:5px 12px;">Overdue</button>
-        <button class="etab" id="td-filter-upcoming" onclick="setTodoistFilter('upcoming',this)" style="font-size:11px;padding:5px 12px;">Next 7 Days</button>
-        <button class="etab" id="td-filter-all" onclick="setTodoistFilter('all',this)" style="font-size:11px;padding:5px 12px;">All</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--text3);" id="td-status"></span>
-        <button class="btn-ghost" onclick="fetchTodoist()" style="font-size:11px;padding:5px 12px;">↻ Refresh</button>
-        <a href="https://app.todoist.com" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open Todoist ↗</a>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:14px;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:11px;color:var(--text3);" id="td-status"></span>
+      <button class="btn-ghost" onclick="fetchTodoist()" style="font-size:11px;padding:5px 12px;">↻ Refresh</button>
+      <a href="https://app.todoist.com" target="_blank" class="btn-ghost" style="font-size:11px;padding:5px 12px;text-decoration:none;">Open Todoist ↗</a>
     </div>
-    <div class="card">
-      <div id="td-task-list"><div class="loading"><div class="spinner"></div>Loading tasks…</div></div>
+    <div class="td-cols-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <div class="card" style="height:420px;overflow-y:auto;">
+        <div class="card-title" style="margin-bottom:10px;">Today &amp; Overdue</div>
+        <div id="td-task-list-today"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <div class="card" style="height:420px;overflow-y:auto;">
+        <div class="card-title" style="margin-bottom:10px;">Next 7 Days</div>
+        <div id="td-task-list-upcoming"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <div class="card" style="height:420px;overflow-y:auto;">
+        <div class="card-title" style="margin-bottom:10px;">All Tasks</div>
+        <div id="td-task-list-all"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
     </div>
   </div>
 
@@ -1220,10 +1224,12 @@ let tdFilter      = 'today';
 let tdCompletingIds = new Set();
 
 async function fetchTodoist() {
-  const el = document.getElementById('td-task-list');
   const todayEl = document.getElementById('today-tasks-list');
   const statusEl = document.getElementById('td-status');
-  if (el) el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  ['td-task-list-today','td-task-list-upcoming','td-task-list-all'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  });
   if (statusEl) statusEl.textContent = '';
   try {
     // Todoist API v1 (current as of 2025)
@@ -1244,73 +1250,56 @@ async function fetchTodoist() {
     renderTodoistTasks();
     renderTodoistTodayCard();
   } catch(e) {
-    const errMsg = `<div class="error-msg">Could not load Todoist: ${e.message}<br><span style="font-size:11px;">Check your Todoist token in Settings or try refreshing.</span></div>`;
-    if (el) el.innerHTML = errMsg;
+    const errMsg = `<div class="error-msg">Could not load Todoist: ${e.message}</div>`;
+    ['td-task-list-today','td-task-list-upcoming','td-task-list-all'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.innerHTML = errMsg;
+    });
     if (todayEl && todayEl.innerHTML.includes('spinner')) todayEl.innerHTML = '<div class="empty-state">Tasks unavailable</div>';
     if (statusEl) statusEl.textContent = 'Error';
   }
 }
 
-function setTodoistFilter(f, btn) {
-  tdFilter = f;
-  // Only update the filter mini-tabs, not the main tab bar
-  ['today','overdue','upcoming','all'].forEach(k => {
-    const b = document.getElementById('td-filter-' + k);
-    if (b) b.classList.toggle('active', k === f);
-  });
-  renderTodoistTasks();
-}
-
 function renderTodoistTasks() {
-  const el = document.getElementById('td-task-list');
-  if (!el) return;
-
   const todayStr = new Date().toLocaleDateString('en-CA');
   const in7Str   = new Date(Date.now() + 7*86400000).toLocaleDateString('en-CA');
-
-  let tasks = tdAllTasks.filter(t => !tdCompletingIds.has(t.id));
-
-  if (tdFilter === 'today') {
-    tasks = tasks.filter(t => t.due && t.due.date <= todayStr);
-  } else if (tdFilter === 'overdue') {
-    tasks = tasks.filter(t => t.due && t.due.date < todayStr);
-  } else if (tdFilter === 'upcoming') {
-    tasks = tasks.filter(t => t.due && t.due.date > todayStr && t.due.date <= in7Str);
-  }
-
-  // Sort: priority desc (4=urgent in Todoist), then due date asc
-  tasks.sort((a,b) => {
-    if (b.priority !== a.priority) return b.priority - a.priority;
-    const da = a.due ? a.due.date : '9999-12-31';
-    const db = b.due ? b.due.date : '9999-12-31';
-    return da < db ? -1 : da > db ? 1 : 0;
-  });
-
-  if (!tasks.length) {
-    el.innerHTML = '<div class="empty-state">No tasks for this filter ✓</div>';
-    return;
-  }
-
-  // Priority colours: Todoist 4=urgent, 3=high, 2=medium, 1=normal
   const priColor = p => p === 4 ? 'var(--red)' : p === 3 ? 'var(--amber)' : p === 2 ? 'var(--blue)' : 'var(--border2)';
 
-  el.innerHTML = '<div class="task-list">' + tasks.map(t => {
-    const due     = t.due ? t.due.date : null;
-    const isOver  = due && due < todayStr;
+  function sortTasks(arr) {
+    return arr.slice().sort((a,b) => {
+      if (b.priority !== a.priority) return b.priority - a.priority;
+      const da = a.due ? a.due.date : '9999-12-31';
+      const db = b.due ? b.due.date : '9999-12-31';
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
+  }
+
+  function taskHTML(t) {
+    const due    = t.due ? t.due.date : null;
+    const isOver = due && due < todayStr;
     const dueDisp = due ? new Date(due + 'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}) : '';
-    const projTag = t.project_id ? `<span class="td-project">${t.project_id}</span>` : '';
     return `<div class="td-task-row" id="td-row-${t.id}">
-      <button class="td-check-btn" onclick="completeTodoistTask('${t.id}')" title="Mark complete" aria-label="Complete task"></button>
+      <button class="td-check-btn" onclick="completeTodoistTask('${t.id}')" title="Mark complete"></button>
       <div class="td-task-body">
         <div class="td-task-title">${t.content}</div>
         <div class="td-task-meta">
           <span class="td-pri" style="background:${priColor(t.priority)};margin-top:3px;"></span>
           ${dueDisp ? `<span class="td-due${isOver?' overdue':''}">${dueDisp}</span>` : ''}
-          ${t.description ? `<span class="td-project">${t.description.substring(0,30)}</span>` : ''}
         </div>
       </div>
     </div>`;
-  }).join('') + '</div>';
+  }
+
+  function renderCol(elId, tasks) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!tasks.length) { el.innerHTML = '<div class="empty-state">All clear ✓</div>'; return; }
+    el.innerHTML = '<div class="task-list">' + tasks.map(taskHTML).join('') + '</div>';
+  }
+
+  const active = tdAllTasks.filter(t => !tdCompletingIds.has(t.id));
+  renderCol('td-task-list-today',    sortTasks(active.filter(t => t.due && t.due.date <= todayStr)));
+  renderCol('td-task-list-upcoming', sortTasks(active.filter(t => t.due && t.due.date > todayStr && t.due.date <= in7Str)));
+  renderCol('td-task-list-all',      sortTasks(active));
 }
 
 async function completeTodoistTask(id) {
