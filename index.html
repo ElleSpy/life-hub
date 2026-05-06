@@ -995,6 +995,8 @@ async function buildCalendarIframe() {
     const res  = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=50', { headers: { Authorization: 'Bearer ' + gToken } });
     if (!res.ok) return;
     const cals = (await res.json()).items || [];
+    // DEBUG — open DevTools console to see colorId + backgroundColor for each calendar
+    console.log('📅 Calendar colours:', cals.map(c => ({ name: c.summary, colorId: c.colorId, backgroundColor: c.backgroundColor })));
     const base = 'https://calendar.google.com/calendar/embed?';
     const params = new URLSearchParams({
       ctz: 'Europe/London', mode: 'WEEK', showTitle: '0',
@@ -1316,15 +1318,35 @@ function renderTodoistTodayCard() {
   }
 
   const priColor = p => p === 4 ? 'var(--red)' : p === 3 ? 'var(--amber)' : p === 2 ? 'var(--blue)' : 'var(--border2)';
-  el.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px;">'
-    + tasks.slice(0,8).map(t => {
+  el.innerHTML = '<div style="display:flex;flex-direction:column;gap:2px;">'
+    + tasks.slice(0,10).map(t => {
     const isOver = t.due.date < todayStr;
-    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
-      <span style="width:6px;height:6px;border-radius:50%;background:${priColor(t.priority)};flex-shrink:0;"></span>
+    return `<div id="home-td-row-${t.id}" style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
+      <button class="td-check-btn" onclick="completeTodoistTaskHome('${t.id}')" title="Mark complete" style="width:16px;height:16px;flex-shrink:0;"></button>
       <span style="font-size:12px;color:var(--text);flex:1;line-height:1.3;">${t.content}</span>
-      ${isOver ? `<span style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-light);padding:1px 5px;border-radius:3px;flex-shrink:0;">OVERDUE</span>` : ''}
+      ${isOver ? `<span style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-light);padding:1px 5px;border-radius:3px;flex-shrink:0;">OVERDUE</span>` : `<span style="width:6px;height:6px;border-radius:50%;background:${priColor(t.priority)};flex-shrink:0;"></span>`}
     </div>`;
-  }).join('') + (tasks.length > 8 ? `<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px 0;">+${tasks.length-8} more</div>` : '') + '</div>';
+  }).join('') + (tasks.length > 10 ? `<div style="font-size:11px;color:var(--text3);text-align:center;padding:6px 0;">+${tasks.length-10} more — see Tasks page</div>` : '') + '</div>';
+}
+
+async function completeTodoistTaskHome(id) {
+  const btn = document.querySelector(`#home-td-row-${id} .td-check-btn`);
+  if (btn) { btn.classList.add('completing'); btn.innerHTML = '✓'; }
+  try {
+    const res = await fetch(`https://api.todoist.com/api/v1/tasks/${id}/close`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + TODOIST_TOKEN }
+    });
+    if (!res.ok) throw new Error('Todoist ' + res.status);
+    tdAllTasks = tdAllTasks.filter(t => t.id !== id);
+    const row = document.getElementById('home-td-row-' + id);
+    if (row) { row.style.transition='opacity 0.3s'; row.style.opacity='0'; setTimeout(()=>renderTodoistTodayCard(),320); }
+    renderTodoistTasks();
+    showToast('Task done ✓');
+  } catch(e) {
+    if (btn) { btn.classList.remove('completing'); btn.innerHTML = ''; }
+    showToast('Could not complete task');
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
