@@ -807,7 +807,7 @@ let userData = {
   monthNotes: {},
   hubTasks: [],
   ticktickCache: {
-    fetchedAt: "2026-05-06T21:30:00Z",
+    fetchedAt: "2026-05-06T20:45:00Z",
     today: [
       {"id":"69e3b1b7c02ed14fbbefd795","title":"For Goalhanger 🪩","due_date":"2026-05-05T23:00:00Z","priority":5},
       {"id":"69f64af03a3051674fea51ea","title":"Look for fungus cream","due_date":"2026-05-06T23:00:00Z","priority":5},
@@ -1056,10 +1056,20 @@ function loadTickTickTasks() {
 }
 
 function renderTickTickToday() {
-  const el = document.getElementById('today-tasks-list');
+  const el  = document.getElementById('today-tasks-list');
   const el2 = document.getElementById('tt-today');
   const cache = userData.ticktickCache || {};
-  const tasks = cache.today || [];
+  const allTasks = cache.today || [];
+
+  // Compare using local date strings so BST tasks don't bleed into tomorrow
+  const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in local tz
+
+  // Filter to only tasks due today or earlier
+  const tasks = allTasks.filter(t => {
+    if (!t.due_date) return true;
+    const localDueStr = new Date(t.due_date).toLocaleDateString('en-CA');
+    return localDueStr <= todayStr;
+  });
 
   if (!tasks.length) {
     const msg = '<div class="empty-state">No tasks due today ✓</div>';
@@ -1070,21 +1080,28 @@ function renderTickTickToday() {
     return;
   }
 
-  const now = new Date(); now.setHours(0,0,0,0);
+  // Sort purely by local due date ascending, then priority desc within same day
+  tasks.sort((a, b) => {
+    const da = a.due_date ? new Date(a.due_date).toLocaleDateString('en-CA') : '9999-12-31';
+    const db = b.due_date ? new Date(b.due_date).toLocaleDateString('en-CA') : '9999-12-31';
+    if (da !== db) return da < db ? -1 : 1;
+    return (b.priority || 0) - (a.priority || 0);
+  });
+
   let overdueCount = 0;
 
-  const html = '<div class="task-list">' + tasks.map(t => {
-    const due    = t.due_date ? new Date(t.due_date) : null;
-    const isPast = due && due < now;
+  // Compact pill-style list
+  const html = '<div style="display:flex;flex-direction:column;gap:4px;">' + tasks.map(t => {
+    const due       = t.due_date ? new Date(t.due_date) : null;
+    const localDue  = due ? due.toLocaleDateString('en-CA') : null;
+    const isPast    = localDue && localDue < todayStr;
     if (isPast) overdueCount++;
-    const dotClass = isPast ? 'overdue' : (t.priority === 5 ? 'p5' : t.priority === 3 ? 'p3' : '');
-    const dueStr   = due ? due.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '';
-    return `<div class="task-row">
-      <div class="task-dot ${dotClass}"></div>
-      <div class="task-body">
-        <div class="task-title">${t.title}</div>
-        ${dueStr ? `<div class="task-meta ${isPast ? 'overdue' : ''}">${isPast ? 'Overdue · ' : ''}${dueStr}</div>` : ''}
-      </div>
+    const priColor  = t.priority === 5 ? 'var(--red)' : t.priority === 3 ? 'var(--amber)' : t.priority === 1 ? 'var(--blue)' : 'var(--border2)';
+    const overdueTag = isPast ? `<span style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-light);padding:1px 5px;border-radius:3px;flex-shrink:0;">OVERDUE</span>` : '';
+    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);">
+      <span style="width:6px;height:6px;border-radius:50%;background:${priColor};flex-shrink:0;"></span>
+      <span style="font-size:12px;color:var(--text);flex:1;line-height:1.3;">${t.title}</span>
+      ${overdueTag}
     </div>`;
   }).join('') + '</div>';
 
@@ -1097,7 +1114,7 @@ function renderTickTickToday() {
   if (cache.fetchedAt) {
     const timeStr = new Date(cache.fetchedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     const syncNote = document.getElementById('tt-sync-note');
-    if (syncNote) syncNote.textContent = `Last synced ${timeStr} · Ask Claude to refresh`;
+    if (syncNote) syncNote.textContent = `Cached ${timeStr}`;
   }
 }
 
