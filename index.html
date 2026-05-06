@@ -111,10 +111,10 @@
   .stat-card.accent-amber .stat-val { color:var(--amber); }
 
   /* ── TWO-COLUMN TODAY LAYOUT ── */
-  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px; }
-  .today-cols > .card { display:flex;flex-direction:column;min-height:280px; }
+  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;grid-auto-rows:1fr; }
+  .today-cols > .card { display:flex;flex-direction:column; }
   .today-cols > .card > #today-events-list,
-  .today-cols > .card > #today-tasks-list { flex:1;overflow-y:auto; }
+  .today-cols > .card > #today-tasks-list { flex:1;overflow-y:auto;min-height:0; }
 
   /* ── CALENDAR EVENTS ── */
   .event-list { display:flex;flex-direction:column;gap:1px; }
@@ -158,12 +158,12 @@
   .quick-capture button:hover { opacity:0.85; }
 
   /* ── GRIDS ── */
-  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
-  .grid-2 > .card { display:flex;flex-direction:column;min-height:240px; }
+  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px;grid-auto-rows:1fr; }
+  .grid-2 > .card { display:flex;flex-direction:column; }
   .grid-2 > .card > #tt-today,
   .grid-2 > .card > #tt-upcoming,
   .grid-2 > .card > #bucketList,
-  .grid-2 > .card > #travelList { flex:1;overflow-y:auto; }
+  .grid-2 > .card > #travelList { flex:1;overflow-y:auto;min-height:0; }
   .grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
   .grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
 
