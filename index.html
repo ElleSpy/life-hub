@@ -111,7 +111,8 @@
   .stat-card.accent-amber .stat-val { color:var(--amber); }
 
   /* ── TWO-COLUMN TODAY LAYOUT ── */
-  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;align-items:start; }
+  .today-cols { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px; }
+  .today-cols > .card { height:320px;overflow-y:auto; }
 
   /* ── CALENDAR EVENTS ── */
   .event-list { display:flex;flex-direction:column;gap:1px; }
@@ -155,7 +156,8 @@
   .quick-capture button:hover { opacity:0.85; }
 
   /* ── GRIDS ── */
-  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start; }
+  .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .grid-2 > .card { height:320px;overflow-y:auto; }
   .grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
   .grid-4 { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
 
