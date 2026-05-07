@@ -114,7 +114,7 @@
   .btn-signout:hover { color:var(--red);border-color:var(--red-light); }
 
   /* ── HAMBURGER ── */
-  .hamburger { display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--sidebar-bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:15px; }
+  .hamburger { display:none;position:fixed;top:14px;left:14px;z-index:95;background:var(--sidebar-bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:15px; }
   .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90; }
 
   /* ── MAIN ── */
@@ -405,7 +405,7 @@
 </div>
 
 <!-- HAMBURGER -->
-<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
@@ -419,7 +419,6 @@
   </div>
 
   <div class="sidebar-logo">Life Hub</div>
-  <div class="sidebar-user" id="sidebar-user">Loading…</div>
 
   <div class="nav-section"><div class="nav-label">Main</div></div>
   <div class="nav-item active" onclick="switchPage('today')"><span class="nav-icon">🏠</span> Today</div>
@@ -1621,12 +1620,15 @@ function calculateCountdown() {
 }
 
 function toggleSidebar() {
-  document.querySelector('.sidebar').classList.toggle('open');
+  const sb = document.querySelector('.sidebar');
+  const isOpen = sb.classList.toggle('open');
   document.querySelector('.sidebar-overlay').classList.toggle('open');
+  document.getElementById('hamburger-btn').style.display = isOpen ? 'none' : '';
 }
 function closeSidebar() {
   document.querySelector('.sidebar').classList.remove('open');
   document.querySelector('.sidebar-overlay').classList.remove('open');
+  document.getElementById('hamburger-btn').style.display = '';
 }
 
 function switchPage(name) {
