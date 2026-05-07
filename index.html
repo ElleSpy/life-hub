@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Life Hub</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#a78bfa">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life Hub">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -83,7 +94,7 @@
 
   /* ── SYNC INDICATOR ── */
   #sync-indicator { font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px;font-family:'Manrope',sans-serif;display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow); }
-  #top-bar { position:fixed;top:14px;right:16px;z-index:500;display:flex;align-items:center;gap:6px; }
+  #top-bar { position:fixed;top:max(14px, env(safe-area-inset-top));right:max(16px, env(safe-area-inset-right));z-index:500;display:flex;align-items:center;gap:6px; }
   #theme-toggle { width:28px;height:28px;border-radius:50%;background:var(--card);border:1px solid var(--border2);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.2s;padding:0;flex-shrink:0; }
   #theme-toggle:hover { background:var(--card-high);border-color:var(--violet); }
   #sync-dot { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
@@ -114,7 +125,7 @@
   .btn-signout:hover { color:var(--red);border-color:var(--red-light); }
 
   /* ── HAMBURGER ── */
-  .hamburger { display:none;position:fixed;top:14px;left:14px;z-index:95;background:var(--sidebar-bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:15px; }
+  .hamburger { display:none;position:fixed;top:max(14px, env(safe-area-inset-top));left:max(14px, env(safe-area-inset-left));z-index:95;background:var(--sidebar-bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:15px; }
   .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90; }
 
   /* ── MAIN ── */
@@ -1948,6 +1959,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/life-hub/sw.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
